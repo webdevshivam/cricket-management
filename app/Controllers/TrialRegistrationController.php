@@ -58,32 +58,32 @@ class TrialRegistrationController extends BaseController
     public function verify()
     {
         $mobile = $this->request->getPost('mobile');
-        
+
         if (!$mobile) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Mobile number is required'
             ]);
         }
-        
+
         $model = new TrialPlayerModel();
         $player = $model->where('mobile', $mobile)->first();
-        
+
         if (!$player) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Player not found with this mobile number'
             ]);
         }
-        
+
         // Calculate cricket type fees
         $fees = $this->getCricketTypeFees($player['cricket_type']);
         $balanceAmount = 0;
-        
+
         if ($player['payment_type'] === 'partial') {
             $balanceAmount = $fees - 199;
         }
-        
+
         return $this->response->setJSON([
             'success' => true,
             'player' => $player,
@@ -91,32 +91,32 @@ class TrialRegistrationController extends BaseController
             'total_fees' => $fees
         ]);
     }
-    
+
     public function updateVerification()
     {
         $data = $this->request->getPost();
         $model = new TrialPlayerModel();
-        
+
         $updateData = [
             'is_verified' => 1,
             'verified_at' => date('Y-m-d H:i:s'),
             't_shirt_given' => isset($data['t_shirt_given']) ? 1 : 0,
             'payment_status' => $data['payment_status'] ?? 'pending'
         ];
-        
+
         if ($model->update($data['player_id'], $updateData)) {
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Player verification updated successfully'
             ]);
         }
-        
+
         return $this->response->setJSON([
             'success' => false,
             'message' => 'Failed to update verification'
         ]);
     }
-    
+
     private function getCricketTypeFees($cricketType)
     {
         $fees = [
@@ -125,34 +125,34 @@ class TrialRegistrationController extends BaseController
             'wicket-keeper' => 1199,
             'all-rounder' => 1199
         ];
-        
+
         return $fees[$cricketType] ?? 999;
     }
 
     public function verificationDashboard()
     {
         $model = new TrialPlayerModel();
-        
+
         $data['total_players'] = $model->countAll();
         $data['verified_players'] = $model->where('is_verified', 1)->countAllResults(false);
         $data['pending_verification'] = $model->where('is_verified', 0)->countAllResults(false);
         $data['partial_payment'] = $model->where('payment_type', 'partial')->countAllResults(false);
         $data['full_payment'] = $model->where('payment_type', 'full')->countAllResults(false);
-        
+
         return view('admin/trial/verification_dashboard', $data);
     }
-    
+
     public function getPlayers()
     {
         $model = new TrialPlayerModel();
         $paymentType = $this->request->getGet('payment_type');
-        
+
         if ($paymentType && in_array($paymentType, ['partial', 'full'])) {
             $model->where('payment_type', $paymentType);
         }
-        
+
         $players = $model->orderBy('created_at', 'DESC')->findAll();
-        
+
         return $this->response->setJSON([
             'success' => true,
             'players' => $players
@@ -163,7 +163,7 @@ class TrialRegistrationController extends BaseController
     {
         $data = $this->request->getPost();
         $model = new TrialPlayerModel();
-        
+
         $updateData = [];
         if (isset($data['payment_type'])) {
             $updateData['payment_type'] = $data['payment_type'];
@@ -171,90 +171,90 @@ class TrialRegistrationController extends BaseController
         if (isset($data['payment_status'])) {
             $updateData['payment_status'] = $data['payment_status'];
         }
-        
+
         if (empty($updateData)) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'No data to update'
             ]);
         }
-        
+
         if ($model->update($data['player_id'], $updateData)) {
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Player updated successfully'
             ]);
         }
-        
+
         return $this->response->setJSON([
             'success' => false,
             'message' => 'Failed to update player'
         ]);
     }
-    
+
     public function bulkUpdate()
     {
         $data = $this->request->getPost();
         $playerIds = json_decode($data['player_ids'], true);
-        
+
         if (empty($playerIds)) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'No players selected'
             ]);
         }
-        
+
         $model = new TrialPlayerModel();
         $updateData = [];
-        
+
         if (!empty($data['payment_type'])) {
             $updateData['payment_type'] = $data['payment_type'];
         }
         if (!empty($data['payment_status'])) {
             $updateData['payment_status'] = $data['payment_status'];
         }
-        
+
         if (empty($updateData)) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'No data to update'
             ]);
         }
-        
+
         $updated = 0;
         foreach ($playerIds as $playerId) {
             if ($model->update($playerId, $updateData)) {
                 $updated++;
             }
         }
-        
+
         return $this->response->setJSON([
             'success' => $updated > 0,
             'message' => "Updated {$updated} players successfully"
         ]);
     }
-    
+
     public function bulkDelete()
     {
         $data = $this->request->getPost();
         $playerIds = json_decode($data['player_ids'], true);
-        
+
         if (empty($playerIds)) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'No players selected'
             ]);
         }
-        
+
         $model = new TrialPlayerModel();
         $deleted = 0;
-        
+
         foreach ($playerIds as $playerId) {
             if ($model->delete($playerId)) {
                 $deleted++;
             }
         }
-        
+
         return $this->response->setJSON([
             'success' => $deleted > 0,
             'message' => "Deleted {$deleted} players successfully"
