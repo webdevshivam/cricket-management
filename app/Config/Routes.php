@@ -70,6 +70,7 @@ $routes->group('admin/trial-registration', ['filter' => 'role:admin'], function 
   $routes->post('bulk-update-status', 'TrialRegistrationController::bulkUpdateStatus');
   $routes->get('today-verifications', 'TrialRegistrationController::todayVerifications');
   $routes->get('today-collection', 'TrialRegistrationController::todayCollection');
+  $routes->post('update-payment-status', 'TrialRegistrationController::updatePaymentStatus');
 });
 
 

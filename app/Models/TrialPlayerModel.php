@@ -27,6 +27,19 @@ class TrialPlayerModel extends Model
     'created_at',
   ];
 
+  protected $beforeInsert = ['setDefaultPaymentStatus'];
+
+  protected function setDefaultPaymentStatus(array $data)
+  {
+    if (!isset($data['data']['payment_status'])) {
+      $data['data']['payment_status'] = 'no_payment';
+    }
+    if (!isset($data['data']['payment_type'])) {
+      $data['data']['payment_type'] = 'none';
+    }
+    return $data;
+  }
+
   protected $useTimestamps    = true;
   protected $createdField     = 'created_at';
   protected $updatedField     = '';
