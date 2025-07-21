@@ -418,7 +418,30 @@
                     <button type="button" class="btn btn-sm btn-warning" onclick="bulkMarkPending()" id="bulkPendingBtn" disabled>
                         <i class="fas fa-undo me-1"></i>Mark as Pending
                     </button>
-                </div>
+                                <div class="dropdown">
+                                <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="bulkStatusDropdown" data-bs-toggle="dropdown" aria-expanded="false" disabled>
+                                    <i class="fas fa-edit"></i> Bulk Status Update
+                                </button>
+                                <ul class="dropdown-menu" style="background: var(--secondary-black); border: 1px solid var(--border-color);">
+                                    <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdatePaymentStatus('no_payment')">
+                                        <i class="fas fa-times-circle text-danger"></i> No Payment
+                                    </a></li>
+                                    <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdatePaymentStatus('partial')">
+                                        <i class="fas fa-clock text-warning"></i> Partial Payment (₹199)
+                                    </a></li>
+                                    <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdatePaymentStatus('full')">
+                                        <i class="fas fa-check-circle text-success"></i> Full Payment
+                                    </a></li>
+                                    <li><hr class="dropdown-divider" style="border-color: var(--border-color);"></li>
+                                    <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdateVerification('verified')">
+                                        <i class="fas fa-user-check text-success"></i> Mark as Verified
+                                    </a></li>
+                                    <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdateVerification('unverified')">
+                                        <i class="fas fa-user-times text-danger"></i> Mark as Unverified
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
                 <small class="text-muted">Selected: <span id="selectedCount">0</span> players</small>
             </div>
         </div>
@@ -542,6 +565,7 @@
         document.getElementById('selectedCount').textContent = count;
         document.getElementById('bulkDeleteBtn').disabled = count === 0;
         document.getElementById('bulkPendingBtn').disabled = count === 0;
+                document.getElementById('bulkStatusDropdown').disabled = count === 0;
     }
 
     // Verify single player
@@ -679,6 +703,79 @@
             formData.append('action', 'mark_pending');
 
             fetch('<?= base_url('admin/trial-registration/bulk-update-status') ?>', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Updated ${playerIds.length} players successfully`);
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Failed to update players');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during update');
+                });
+        }
+    }
+
+        function bulkUpdatePaymentStatus(paymentStatus) {
+        const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
+
+        if (checkedBoxes.length === 0) {
+            alert('Please select at least one player');
+            return;
+        }
+
+        if (confirm(`Update payment status to ${paymentStatus} for ${checkedBoxes.length} selected players?`)) {
+            const playerIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+            const formData = new FormData();
+            formData.append('player_ids', JSON.stringify(playerIds));
+            formData.append('payment_status', paymentStatus);
+
+            fetch('<?= base_url('admin/trial-registration/bulk-update-payment-status') ?>', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Updated ${playerIds.length} players successfully`);
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Failed to update players');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during update');
+                });
+        }
+    }
+    
+        function bulkUpdateVerification(verificationStatus) {
+        const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
+
+        if (checkedBoxes.length === 0) {
+            alert('Please select at least one player');
+            return;
+        }
+
+        const isVerified = verificationStatus === 'verified' ? 1 : 0;
+        const message = verificationStatus === 'verified' ? 'Mark as Verified' : 'Mark as Unverified';
+
+        if (confirm(`${message} for ${checkedBoxes.length} selected players?`)) {
+            const playerIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+            const formData = new FormData();
+            formData.append('player_ids', JSON.stringify(playerIds));
+            formData.append('is_verified', isVerified);
+
+            fetch('<?= base_url('admin/trial-registration/bulk-update-verification') ?>', {
                     method: 'POST',
                     body: formData
                 })

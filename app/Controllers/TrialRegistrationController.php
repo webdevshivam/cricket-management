@@ -340,6 +340,94 @@ class TrialRegistrationController extends BaseController
         ]);
     }
     
+    public function bulkUpdatePayment()
+    {
+        $data = $this->request->getPost();
+        $playerIds = json_decode($data['player_ids'], true);
+        $paymentStatus = $data['payment_status'];
+        $paymentType = $data['payment_type'] ?? 'none';
+        
+        if (empty($playerIds)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No players selected'
+            ]);
+        }
+        
+        $model = new TrialPlayerModel();
+        $updated = 0;
+        
+        foreach ($playerIds as $playerId) {
+            $updateData = [
+                'payment_status' => $paymentStatus,
+                'payment_type' => $paymentType
+            ];
+            
+            // Calculate balance for partial payments
+            if ($paymentStatus === 'partial') {
+                $player = $model->find($playerId);
+                if ($player) {
+                    $totalFees = $this->getCricketTypeFees($player['cricket_type']);
+                    $updateData['balance_amount'] = $totalFees - 199;
+                }
+            } elseif ($paymentStatus === 'full') {
+                $updateData['balance_amount'] = 0;
+            }
+            
+            if ($model->update($playerId, $updateData)) {
+                $updated++;
+            }
+        }
+        
+        return $this->response->setJSON([
+            'success' => $updated > 0,
+            'message' => "Updated payment status for {$updated} players successfully"
+        ]);
+    }
+    
+    public function bulkUpdateVerification()
+    {
+        $data = $this->request->getPost();
+        $playerIds = json_decode($data['player_ids'], true);
+        $verificationStatus = $data['verification_status'];
+        
+        if (empty($playerIds)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No players selected'
+            ]);
+        }
+        
+        $model = new TrialPlayerModel();
+        $updated = 0;
+        
+        foreach ($playerIds as $playerId) {
+            $updateData = [];
+            
+            if ($verificationStatus === 'verified') {
+                $updateData = [
+                    'is_verified' => 1,
+                    'verified_at' => date('Y-m-d H:i:s')
+                ];
+            } elseif ($verificationStatus === 'unverified') {
+                $updateData = [
+                    'is_verified' => 0,
+                    'verified_at' => null,
+                    't_shirt_given' => 0
+                ];
+            }
+            
+            if (!empty($updateData) && $model->update($playerId, $updateData)) {
+                $updated++;
+            }
+        }
+        
+        return $this->response->setJSON([
+            'success' => $updated > 0,
+            'message' => "Updated verification status for {$updated} players successfully"
+        ]);
+    }
+
     public function todayVerifications()
     {
         $model = new TrialPlayerModel();
