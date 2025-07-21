@@ -127,10 +127,10 @@
                 </label>
                 <select name="cricket_type" class="form-select" id="cricketType" onchange="showFees(this.value)" required>
                   <option value="">Select Cricket Type</option>
-                  <option value="bowler">Bowler</option>
-                  <option value="batsman">Batsman</option>
-                  <option value="wicket-keeper">Wicket Keeper</option>
-                  <option value="all-rounder">All Rounder</option>
+                  <option value="bowler">Bowler - ₹999</option>
+                  <option value="batsman">Batsman - ₹999</option>
+                  <option value="wicket-keeper">Wicket Keeper - ₹1199</option>
+                  <option value="all-rounder">All Rounder - ₹1199</option>
                 </select>
                 <div class="invalid-feedback">Please select a cricket type.</div>
               </div>

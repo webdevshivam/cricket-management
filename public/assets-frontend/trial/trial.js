@@ -465,4 +465,25 @@ function showFees(cricketType) {
   }
 
   feesElement.textContent = `₹${fees}`;
+  
+  // Show payment info section when cricket type is selected
+  if (fees > 0) {
+    const paymentInfo = document.querySelector('.payment-info');
+    if (paymentInfo) {
+      paymentInfo.innerHTML = `
+        <h5 class="text-golden">Payment Options</h5>
+        <div class="payment-options mb-3">
+          <div class="alert alert-info">
+            <strong>Total Trial Fee: ₹${fees}</strong><br>
+            <small>You can choose to:</small>
+            <ul class="mt-2 mb-0">
+              <li>Pay nothing now (pay full amount at trial venue)</li>
+              <li>Pay ₹199 now (T-shirt fee + remaining ₹${fees - 199} at venue)</li>
+              <li>Pay full ₹${fees} now (includes T-shirt)</li>
+            </ul>
+          </div>
+        </div>
+      `;
+    }
+  }
 }
