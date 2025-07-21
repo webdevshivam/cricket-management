@@ -159,6 +159,108 @@ class TrialRegistrationController extends BaseController
         ]);
     }
 
+    public function updateSingle()
+    {
+        $data = $this->request->getPost();
+        $model = new TrialPlayerModel();
+        
+        $updateData = [];
+        if (isset($data['payment_type'])) {
+            $updateData['payment_type'] = $data['payment_type'];
+        }
+        if (isset($data['payment_status'])) {
+            $updateData['payment_status'] = $data['payment_status'];
+        }
+        
+        if (empty($updateData)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No data to update'
+            ]);
+        }
+        
+        if ($model->update($data['player_id'], $updateData)) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Player updated successfully'
+            ]);
+        }
+        
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Failed to update player'
+        ]);
+    }
+    
+    public function bulkUpdate()
+    {
+        $data = $this->request->getPost();
+        $playerIds = json_decode($data['player_ids'], true);
+        
+        if (empty($playerIds)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No players selected'
+            ]);
+        }
+        
+        $model = new TrialPlayerModel();
+        $updateData = [];
+        
+        if (!empty($data['payment_type'])) {
+            $updateData['payment_type'] = $data['payment_type'];
+        }
+        if (!empty($data['payment_status'])) {
+            $updateData['payment_status'] = $data['payment_status'];
+        }
+        
+        if (empty($updateData)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No data to update'
+            ]);
+        }
+        
+        $updated = 0;
+        foreach ($playerIds as $playerId) {
+            if ($model->update($playerId, $updateData)) {
+                $updated++;
+            }
+        }
+        
+        return $this->response->setJSON([
+            'success' => $updated > 0,
+            'message' => "Updated {$updated} players successfully"
+        ]);
+    }
+    
+    public function bulkDelete()
+    {
+        $data = $this->request->getPost();
+        $playerIds = json_decode($data['player_ids'], true);
+        
+        if (empty($playerIds)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No players selected'
+            ]);
+        }
+        
+        $model = new TrialPlayerModel();
+        $deleted = 0;
+        
+        foreach ($playerIds as $playerId) {
+            if ($model->delete($playerId)) {
+                $deleted++;
+            }
+        }
+        
+        return $this->response->setJSON([
+            'success' => $deleted > 0,
+            'message' => "Deleted {$deleted} players successfully"
+        ]);
+    }
+
     public function exportPdf()
     {
         $model = new TrialPlayerModel();

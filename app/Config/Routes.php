@@ -64,6 +64,9 @@ $routes->group('admin/trial-registration', ['filter' => 'role:admin'], function 
   $routes->post('verify', 'TrialRegistrationController::verify');
   $routes->post('update-verification', 'TrialRegistrationController::updateVerification');
   $routes->get('get-players', 'TrialRegistrationController::getPlayers');
+  $routes->post('update-single', 'TrialRegistrationController::updateSingle');
+  $routes->post('bulk-update', 'TrialRegistrationController::bulkUpdate');
+  $routes->post('bulk-delete', 'TrialRegistrationController::bulkDelete');
 });
 
 
