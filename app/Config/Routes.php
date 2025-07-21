@@ -73,6 +73,14 @@ $routes->group('admin/trial-registration', ['filter' => 'role:admin'], function 
   $routes->post('update-payment-status', 'TrialRegistrationController::updatePaymentStatus');
 });
 
+// Verified Students Management Routes
+
+  $routes->get('/admin/verified-students', 'TrialRegistrationController::verifiedStudents', ['filter' => 'role:admin']);
+  $routes->post('/admin/trial-registration/move-verified-students', 'TrialRegistrationController::moveVerifiedStudents', ['filter' => 'role:admin']);
+  $routes->post('/admin/trial-registration/update-student-payment-status', 'TrialRegistrationController::updateStudentPaymentStatus', ['filter' => 'role:admin']);
+  $routes->post('/admin/trial-registration/bulk-update-student-payment-status', 'TrialRegistrationController::bulkUpdateStudentPaymentStatus', ['filter' => 'role:admin']);
+
+
 
 $routes->get('/manager/dashboard', 'ManagerController::dashboard', ['filter' => 'role:manager']);
 $routes->get('/coach/dashboard', 'CoachController::dashboard', ['filter' => 'role:coach']);

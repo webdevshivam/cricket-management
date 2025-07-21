@@ -544,4 +544,115 @@ class TrialRegistrationController extends BaseController
         $filename = 'trial_registrations_' . date('Y-m-d_H-i-s') . '.pdf';
         $pdf->Output($filename, 'D'); // 'D' forces download
     }
+
+    // Verified Students Management Methods
+    public function verifiedStudents()
+    {
+        $verifiedModel = new \App\Models\VerifiedStudentModel();
+        
+        $data['partial_students'] = $verifiedModel->getByPaymentStatus('partial');
+        $data['full_students'] = $verifiedModel->getByPaymentStatus('full');
+        
+        return view('admin/trial/verified_students', $data);
+    }
+    
+    public function moveVerifiedStudents()
+    {
+        $trialModel = new TrialPlayerModel();
+        $verifiedModel = new \App\Models\VerifiedStudentModel();
+        
+        // Get all verified students with partial or full payment
+        $verifiedTrialPlayers = $trialModel->where('is_verified', 1)
+                                          ->whereIn('payment_status', ['partial', 'full'])
+                                          ->findAll();
+        
+        $moved = 0;
+        $errors = [];
+        
+        foreach ($verifiedTrialPlayers as $player) {
+            // Move to verified students table
+            if ($verifiedModel->moveFromTrialPlayer($player)) {
+                // Delete from trial players table
+                if ($trialModel->delete($player['id'])) {
+                    $moved++;
+                } else {
+                    // If delete fails, we should rollback the insert
+                    $verifiedModel->where('original_trial_id', $player['id'])->delete();
+                    $errors[] = "Failed to move player: " . $player['name'];
+                }
+            } else {
+                $errors[] = "Failed to insert player: " . $player['name'];
+            }
+        }
+        
+        return $this->response->setJSON([
+            'success' => $moved > 0,
+            'moved' => $moved,
+            'errors' => $errors,
+            'message' => $moved > 0 ? "Moved {$moved} verified students successfully" : "No students were moved"
+        ]);
+    }
+    
+    public function updateStudentPaymentStatus()
+    {
+        $data = $this->request->getPost();
+        $verifiedModel = new \App\Models\VerifiedStudentModel();
+        
+        $studentId = $data['student_id'];
+        $newStatus = $data['payment_status'];
+        
+        if (!in_array($newStatus, ['partial', 'full'])) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid payment status'
+            ]);
+        }
+        
+        if ($verifiedModel->updatePaymentStatus($studentId, $newStatus)) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Payment status updated successfully'
+            ]);
+        }
+        
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Failed to update payment status'
+        ]);
+    }
+    
+    public function bulkUpdateStudentPaymentStatus()
+    {
+        $data = $this->request->getPost();
+        $studentIds = json_decode($data['student_ids'], true);
+        $paymentStatus = $data['payment_status'];
+        
+        if (empty($studentIds)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No students selected'
+            ]);
+        }
+        
+        if (!in_array($paymentStatus, ['partial', 'full'])) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Invalid payment status'
+            ]);
+        }
+        
+        $verifiedModel = new \App\Models\VerifiedStudentModel();
+        $updated = 0;
+        
+        foreach ($studentIds as $studentId) {
+            if ($verifiedModel->updatePaymentStatus($studentId, $paymentStatus)) {
+                $updated++;
+            }
+        }
+        
+        return $this->response->setJSON([
+            'success' => $updated > 0,
+            'message' => "Updated payment status for {$updated} students successfully"
+        ]);
+    }
 }
