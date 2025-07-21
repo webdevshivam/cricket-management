@@ -9,7 +9,7 @@ class VerifiedStudentModel extends Model
 {
     protected $table            = 'verified_students';
     protected $primaryKey       = 'id';
-    
+
     protected $allowedFields    = [
         'original_trial_id',
         'name',
@@ -26,15 +26,15 @@ class VerifiedStudentModel extends Model
         'created_at',
         'updated_at'
     ];
-    
+
     protected $useTimestamps    = true;
     protected $createdField     = 'created_at';
     protected $updatedField     = 'updated_at';
-    
+
     protected $returnType       = 'array';
-    
+
     protected $skipValidation   = true;
-    
+
     public function moveFromTrialPlayer($trialPlayer)
     {
         $data = [
@@ -51,23 +51,23 @@ class VerifiedStudentModel extends Model
             't_shirt_given' => $trialPlayer['t_shirt_given'] ?? 0,
             'moved_at' => date('Y-m-d H:i:s')
         ];
-        
+
         return $this->insert($data);
     }
-    
+
     public function getByPaymentStatus($status)
     {
         return $this->where('payment_status', $status)->orderBy('moved_at', 'DESC')->findAll();
     }
-    
+
     public function updatePaymentStatus($id, $status)
     {
         $updateData = ['payment_status' => $status];
-        
+
         if ($status === 'full') {
             $updateData['balance_amount'] = 0;
         }
-        
+
         return $this->update($id, $updateData);
     }
 }

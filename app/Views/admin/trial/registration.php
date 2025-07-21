@@ -2,197 +2,223 @@
 
 <?= $this->section('content') ?>
 <style>
-/* Modern Minimalistic Design */
-.admin-header {
-    background: linear-gradient(135deg, #d4af37 0%, #000000 100%);
-    color: white;
-    padding: 2rem 0;
-    margin-bottom: 2rem;
-    border-radius: 12px;
-}
+    /* Modern Minimalistic Design */
+    .admin-header {
+        background: linear-gradient(135deg, #d4af37 0%, #000000 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 12px;
+    }
 
-.stat-card {
-    background: #000000;
-    color: #d4af37;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    border: 1px solid #d4af37;
-    transition: all 0.3s ease;
-    margin-bottom: 1rem;
-}
+    .stat-card {
+        background: #000000;
+        color: #d4af37;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        border: 1px solid #d4af37;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
 
-.stat-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-}
+    .stat-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    }
 
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin: 0;
-    color: #d4af37;
-}
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0;
+        color: #d4af37;
+    }
 
-.stat-label {
-    color: #d4af37;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-top: 0.25rem;
-}
+    .stat-label {
+        color: #d4af37;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-top: 0.25rem;
+    }
 
-.stat-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    color: white;
-}
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
 
-.icon-primary { background: linear-gradient(135deg, #d4af37 0%, #000000 100%); }
-.icon-success { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
-.icon-warning { background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%); }
-.icon-info { background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%); }
+    .icon-primary {
+        background: linear-gradient(135deg, #d4af37 0%, #000000 100%);
+    }
 
-.action-buttons {
-    background: #000000;
-    color: #d4af37;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    margin-bottom: 1.5rem;
-}
+    .icon-success {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    }
 
-.btn-modern {
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
-    font-weight: 500;
-    border: none;
-    transition: all 0.3s ease;
-}
+    .icon-warning {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+    }
 
-.btn-modern-primary {
-    background: linear-gradient(135deg, #d4af37 0%, #000000 100%);
-    color: white;
-}
+    .icon-info {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    }
 
-.btn-modern-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    color: white;
-}
+    .action-buttons {
+        background: #000000;
+        color: #d4af37;
+        padding: 1.5rem;
+        border-radius: 16px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        margin-bottom: 1.5rem;
+    }
 
-.data-table {
-    background: #000000;
-    color: #d4af37;
-    border-radius: 16px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    overflow: hidden;
-}
+    .btn-modern {
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 500;
+        border: none;
+        transition: all 0.3s ease;
+    }
 
-.table-modern {
-    margin: 0;
-    border: none;
-}
+    .btn-modern-primary {
+        background: linear-gradient(135deg, #d4af37 0%, #000000 100%);
+        color: white;
+    }
 
-.table-modern thead th {
-    background: #1a1a1a;
-    border: none;
-    padding: 1rem;
-    font-weight: 600;
-    color: #d4af37;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+    .btn-modern-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
 
-.table-modern tbody td {
-    padding: 1rem;
-    border: none;
-    border-bottom: 1px solid #d4af37;
-    vertical-align: middle;
-    color: #d4af37;
-}
+    .data-table {
+        background: #000000;
+        color: #d4af37;
+        border-radius: 16px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
 
-.table-modern tbody tr:hover {
-    background-color: #1a1a1a;
-}
+    .table-modern {
+        margin: 0;
+        border: none;
+    }
 
-.status-badge {
-    padding: 0.375rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+    .table-modern thead th {
+        background: #1a1a1a;
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        color: #d4af37;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
 
-.badge-no-payment { background: #fed7d7; color: #c53030; }
-.badge-partial { background: #faf089; color: #975a16; }
-.badge-full { background: #c6f6d5; color: #2f855a; }
-.badge-verified { background: #bee3f8; color: #2b6cb0; }
+    .table-modern tbody td {
+        padding: 1rem;
+        border: none;
+        border-bottom: 1px solid #d4af37;
+        vertical-align: middle;
+        color: #d4af37;
+    }
 
-.action-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 2px;
-    transition: all 0.2s ease;
-}
+    .table-modern tbody tr:hover {
+        background-color: #1a1a1a;
+    }
 
-.action-btn:hover {
-    transform: scale(1.05);
-}
+    .status-badge {
+        padding: 0.375rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
 
-.payment-select {
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 0.5rem;
-    font-size: 0.75rem;
-    background: white;
-    margin-top: 0.5rem;
-}
+    .badge-no-payment {
+        background: #fed7d7;
+        color: #c53030;
+    }
 
-.empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: #a0aec0;
-}
+    .badge-partial {
+        background: #faf089;
+        color: #975a16;
+    }
 
-.bulk-actions {
-    background: #1a1a1a;
-    padding: 1rem 1.5rem;
-    border-top: 1px solid #e2e8f0;
-}
+    .badge-full {
+        background: #c6f6d5;
+        color: #2f855a;
+    }
 
-.page-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: white;
-    margin: 0;
-}
+    .badge-verified {
+        background: #bee3f8;
+        color: #2b6cb0;
+    }
 
-.breadcrumb-modern {
-    background: rgba(255,255,255,0.1);
-    border-radius: 20px;
-    padding: 0.5rem 1rem;
-}
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 2px;
+        transition: all 0.2s ease;
+    }
 
-.breadcrumb-modern a {
-    color: rgba(255,255,255,0.8);
-    text-decoration: none;
-}
+    .action-btn:hover {
+        transform: scale(1.05);
+    }
 
-.breadcrumb-modern .active {
-    color: white;
-}
+    .payment-select {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.5rem;
+        font-size: 0.75rem;
+        background: white;
+        margin-top: 0.5rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #a0aec0;
+    }
+
+    .bulk-actions {
+        background: #1a1a1a;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+    }
+
+    .breadcrumb-modern {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+    }
+
+    .breadcrumb-modern a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+    }
+
+    .breadcrumb-modern .active {
+        color: white;
+    }
 </style>
 
 <div class="container-fluid" style="background: #1a1a1a; min-height: 100vh; padding: 2rem 1rem;">
@@ -418,39 +444,41 @@
                     <button type="button" class="btn btn-sm btn-warning" onclick="bulkMarkPending()" id="bulkPendingBtn" disabled>
                         <i class="fas fa-undo me-1"></i>Mark as Pending
                     </button>
-                                <div class="dropdown">
-                                <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="bulkStatusDropdown" data-bs-toggle="dropdown" aria-expanded="false" disabled>
-                                    <i class="fas fa-edit"></i> Bulk Status Update
-                                </button>
-                                <ul class="dropdown-menu" style="background: var(--secondary-black); border: 1px solid var(--border-color);">
-                                    <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdatePaymentStatus('no_payment')">
-                                        <i class="fas fa-times-circle text-danger"></i> No Payment
-                                    </a></li>
-                                    <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdatePaymentStatus('partial')">
-                                        <i class="fas fa-clock text-warning"></i> Partial Payment (₹199)
-                                    </a></li>
-                                    <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdatePaymentStatus('full')">
-                                        <i class="fas fa-check-circle text-success"></i> Full Payment
-                                    </a></li>
-                                    <li><hr class="dropdown-divider" style="border-color: var(--border-color);"></li>
-                                    <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdateVerification('verified')">
-                                        <i class="fas fa-user-check text-success"></i> Mark as Verified
-                                    </a></li>
-                                    <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdateVerification('unverified')">
-                                        <i class="fas fa-user-times text-danger"></i> Mark as Unverified
-                                    </a></li>
-                                </ul>
-                            </div>
-                        </div>
+                    <div class="dropdown">
+                        <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="bulkStatusDropdown" data-bs-toggle="dropdown" aria-expanded="false" disabled>
+                            <i class="fas fa-edit"></i> Bulk Status Update
+                        </button>
+                        <ul class="dropdown-menu" style="background: var(--secondary-black); border: 1px solid var(--border-color);">
+                            <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdatePaymentStatus('no_payment')">
+                                    <i class="fas fa-times-circle text-danger"></i> No Payment
+                                </a></li>
+                            <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdatePaymentStatus('partial')">
+                                    <i class="fas fa-clock text-warning"></i> Partial Payment (₹199)
+                                </a></li>
+                            <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdatePaymentStatus('full')">
+                                    <i class="fas fa-check-circle text-success"></i> Full Payment
+                                </a></li>
+                            <li>
+                                <hr class="dropdown-divider" style="border-color: var(--border-color);">
+                            </li>
+                            <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdateVerification('verified')">
+                                    <i class="fas fa-user-check text-success"></i> Mark as Verified
+                                </a></li>
+                            <li><a class="dropdown-item text-light" href="#" onclick="bulkUpdateVerification('unverified')">
+                                    <i class="fas fa-user-times text-danger"></i> Mark as Unverified
+                                </a></li>
+                        </ul>
+                    </div>
+                </div>
                 <small class="text-muted">Selected: <span id="selectedCount">0</span> players</small>
             </div>
         </div>
 
         <!-- Pagination -->
         <?php if (!empty($registrations)): ?>
-        <div class="d-flex justify-content-center p-3 border-top">
-            <?= $pager->links() ?>
-        </div>
+            <div class="d-flex justify-content-center p-3 border-top">
+                <?= $pager->links() ?>
+            </div>
         <?php endif; ?>
     </div>
 </div>
@@ -565,7 +593,7 @@
         document.getElementById('selectedCount').textContent = count;
         document.getElementById('bulkDeleteBtn').disabled = count === 0;
         document.getElementById('bulkPendingBtn').disabled = count === 0;
-                document.getElementById('bulkStatusDropdown').disabled = count === 0;
+        document.getElementById('bulkStatusDropdown').disabled = count === 0;
     }
 
     // Verify single player
@@ -722,7 +750,7 @@
         }
     }
 
-        function bulkUpdatePaymentStatus(paymentStatus) {
+    function bulkUpdatePaymentStatus(paymentStatus) {
         const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
 
         if (checkedBoxes.length === 0) {
@@ -756,8 +784,8 @@
                 });
         }
     }
-    
-        function bulkUpdateVerification(verificationStatus) {
+
+    function bulkUpdateVerification(verificationStatus) {
         const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
 
         if (checkedBoxes.length === 0) {
@@ -806,31 +834,31 @@
         selectElement.disabled = true;
 
         fetch('<?= base_url('admin/trial-registration/update-payment-status') ?>', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update current status
-                selectElement.dataset.currentStatus = newStatus;
-                // Reload page to reflect changes
-                location.reload();
-            } else {
-                alert(data.message || 'Failed to update payment status');
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update current status
+                    selectElement.dataset.currentStatus = newStatus;
+                    // Reload page to reflect changes
+                    location.reload();
+                } else {
+                    alert(data.message || 'Failed to update payment status');
+                    // Revert select to previous value
+                    selectElement.value = selectElement.dataset.currentStatus;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating payment status');
                 // Revert select to previous value
                 selectElement.value = selectElement.dataset.currentStatus;
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while updating payment status');
-            // Revert select to previous value
-            selectElement.value = selectElement.dataset.currentStatus;
-        })
-        .finally(() => {
-            selectElement.disabled = false;
-        });
+            })
+            .finally(() => {
+                selectElement.disabled = false;
+            });
     }
 
     function deletePlayer(playerId) {
