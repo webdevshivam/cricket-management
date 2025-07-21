@@ -1,4 +1,3 @@
-
 <?= $this->extend('layouts/admin') ?>
 
 <?= $this->section('content') ?>
@@ -145,28 +144,49 @@
                                             </td>
                                             <td><?= esc($reg['city']) ?></td>
                                             <td>
-                                                <?php 
-                                                $isVerified = ($reg['is_verified'] ?? 0) == 1;
-                                                $fees = getCricketTypeFees($reg['cricket_type']);
-                                                ?>
-                                                <?php if ($isVerified): ?>
-                                                    <div class="d-flex flex-column">
-                                                        <span class="badge bg-success mb-1">
-                                                            <i class="fas fa-check-circle"></i> Verified
-                                                        </span>
-                                                        <?php if (($reg['t_shirt_given'] ?? 0) == 1): ?>
-                                                            <small class="text-success"><i class="fas fa-tshirt"></i> T-Shirt Given</small>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                <?php else: ?>
-                                                    <div class="d-flex flex-column">
-                                                        <span class="badge bg-warning mb-1">
-                                                            <i class="fas fa-clock"></i> Pending
-                                                        </span>
-                                                        <small class="text-info">Fee: ₹<?= $fees ?></small>
-                                                    </div>
-                                                <?php endif; ?>
-                                            </td>
+                                <?php 
+                                $isVerified = ($reg['is_verified'] ?? 0) == 1;
+                                $paymentStatus = $reg['payment_status'] ?? 'no_payment';
+                                $fees = getCricketTypeFees($reg['cricket_type']);
+                                ?>
+
+                                <div class="d-flex flex-column">
+                                    <!-- Payment Status Badge -->
+                                    <?php if ($paymentStatus === 'no_payment'): ?>
+                                        <span class="badge bg-danger mb-1">
+                                            <i class="fas fa-times-circle"></i> No Payment
+                                        </span>
+                                    <?php elseif ($paymentStatus === 'partial'): ?>
+                                        <span class="badge bg-warning mb-1">
+                                            <i class="fas fa-clock"></i> Partial (₹199)
+                                        </span>
+                                        <small class="text-info">Balance: ₹<?= $fees - 199 ?></small>
+                                    <?php elseif ($paymentStatus === 'full'): ?>
+                                        <span class="badge bg-success mb-1">
+                                            <i class="fas fa-check-circle"></i> Full Payment
+                                        </span>
+                                    <?php endif; ?>
+
+                                    <!-- Verification Status -->
+                                    <?php if ($isVerified): ?>
+                                        <small class="text-success"><i class="fas fa-user-check"></i> Verified</small>
+                                        <?php if (($reg['t_shirt_given'] ?? 0) == 1): ?>
+                                            <small class="text-success"><i class="fas fa-tshirt"></i> T-Shirt Given</small>
+                                        <?php endif; ?>
+                                    <?php else: ?>
+                                        <small class="text-muted"><i class="fas fa-user-clock"></i> Not Verified</small>
+                                    <?php endif; ?>
+
+                                    <!-- Payment Status Dropdown -->
+                                    <select class="form-select form-select-sm mt-1 payment-status-select" 
+                                            data-player-id="<?= $reg['id'] ?>" 
+                                            data-current-status="<?= $paymentStatus ?>">
+                                        <option value="no_payment" <?= $paymentStatus === 'no_payment' ? 'selected' : '' ?>>No Payment</option>
+                                        <option value="partial" <?= $paymentStatus === 'partial' ? 'selected' : '' ?>>Partial (₹199)</option>
+                                        <option value="full" <?= $paymentStatus === 'full' ? 'selected' : '' ?>>Full Payment</option>
+                                    </select>
+                                </div>
+                            </td>
                                             <td>
                                                 <div class="btn-group">
                                                     <?php if (!$isVerified): ?>
@@ -298,7 +318,7 @@ function updateStats() {
     let verified = 0;
     let pending = 0;
     let totalCollection = 0;
-    
+
     rows.forEach(row => {
         const statusCell = row.cells[6];
         if (statusCell && statusCell.innerHTML.includes('Verified')) {
@@ -313,7 +333,7 @@ function updateStats() {
             pending++;
         }
     });
-    
+
     document.getElementById('verifiedCount').textContent = verified;
     document.getElementById('pendingCount').textContent = pending;
     document.getElementById('totalCollection').textContent = totalCollection.toLocaleString();
@@ -322,7 +342,7 @@ function updateStats() {
 function updateBulkButtons() {
     const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
     const count = checkedBoxes.length;
-    
+
     document.getElementById('selectedCount').textContent = count;
     document.getElementById('bulkDeleteBtn').disabled = count === 0;
     document.getElementById('bulkPendingBtn').disabled = count === 0;
@@ -343,11 +363,11 @@ function viewPlayerDetails(playerId) {
 // Show collection report
 function showCollectionReport() {
     const modal = new bootstrap.Modal(document.getElementById('collectionModal'));
-    
+
     // Generate collection report
     const report = generateCollectionReport();
     document.getElementById('collectionReport').innerHTML = report;
-    
+
     modal.show();
 }
 
@@ -355,7 +375,7 @@ function generateCollectionReport() {
     const rows = document.querySelectorAll('#playersTable tbody tr');
     let totalCollected = 0;
     let verifiedPlayers = [];
-    
+
     rows.forEach(row => {
         const statusCell = row.cells[6];
         if (statusCell && statusCell.innerHTML.includes('Verified')) {
@@ -363,7 +383,7 @@ function generateCollectionReport() {
             const mobile = row.cells[3].textContent;
             const cricketType = row.cells[4].textContent.trim();
             const fees = getCricketTypeFees(cricketType.toLowerCase());
-            
+
             verifiedPlayers.push({
                 name: name,
                 mobile: mobile,
@@ -373,7 +393,7 @@ function generateCollectionReport() {
             totalCollected += fees;
         }
     });
-    
+
     let html = `
         <div class="alert alert-success">
             <h6><i class="fas fa-rupee-sign"></i> Total Ground Collection: ₹${totalCollected.toLocaleString()}</h6>
@@ -390,7 +410,7 @@ function generateCollectionReport() {
                 </thead>
                 <tbody>
     `;
-    
+
     verifiedPlayers.forEach(player => {
         html += `
             <tr>
@@ -401,31 +421,31 @@ function generateCollectionReport() {
             </tr>
         `;
     });
-    
+
     html += `
                 </tbody>
             </table>
         </div>
     `;
-    
+
     return html;
 }
 
 // Bulk delete players
 function bulkDelete() {
     const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
-    
+
     if (checkedBoxes.length === 0) {
         alert('Please select at least one player to delete');
         return;
     }
-    
+
     if (confirm(`Are you sure you want to delete ${checkedBoxes.length} selected players?`)) {
         const playerIds = Array.from(checkedBoxes).map(cb => cb.value);
-        
+
         const formData = new FormData();
         formData.append('player_ids', JSON.stringify(playerIds));
-        
+
         fetch('<?= base_url('admin/trial-registration/bulk-delete') ?>', {
             method: 'POST',
             body: formData
@@ -449,19 +469,19 @@ function bulkDelete() {
 // Mark as pending
 function bulkMarkPending() {
     const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
-    
+
     if (checkedBoxes.length === 0) {
         alert('Please select at least one player');
         return;
     }
-    
+
     if (confirm(`Mark ${checkedBoxes.length} selected players as pending verification?`)) {
         const playerIds = Array.from(checkedBoxes).map(cb => cb.value);
-        
+
         const formData = new FormData();
         formData.append('player_ids', JSON.stringify(playerIds));
         formData.append('action', 'mark_pending');
-        
+
         fetch('<?= base_url('admin/trial-registration/bulk-update-status') ?>', {
             method: 'POST',
             body: formData
@@ -487,7 +507,7 @@ function deletePlayer(playerId) {
     if (confirm('Are you sure you want to delete this player?')) {
         const formData = new FormData();
         formData.append('player_ids', JSON.stringify([playerId]));
-        
+
         fetch('<?= base_url('admin/trial-registration/bulk-delete') ?>', {
             method: 'POST',
             body: formData

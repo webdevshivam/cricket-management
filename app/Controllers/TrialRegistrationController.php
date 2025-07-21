@@ -129,6 +129,45 @@ class TrialRegistrationController extends BaseController
         return $fees[$cricketType] ?? 999;
     }
 
+    public function updatePaymentStatus()
+    {
+        $data = $this->request->getPost();
+        $model = new TrialPlayerModel();
+        
+        $playerId = $data['player_id'];
+        $paymentStatus = $data['payment_status']; // no_payment, partial, full
+        $paymentType = $data['payment_type'] ?? 'none'; // none, partial, full
+        
+        $updateData = [
+            'payment_status' => $paymentStatus,
+            'payment_type' => $paymentType
+        ];
+        
+        // If payment is partial (₹199), calculate balance
+        if ($paymentStatus === 'partial') {
+            $player = $model->find($playerId);
+            $totalFees = $this->getCricketTypeFees($player['cricket_type']);
+            $updateData['balance_amount'] = $totalFees - 199;
+        }
+        
+        // If payment is full, balance is 0
+        if ($paymentStatus === 'full') {
+            $updateData['balance_amount'] = 0;
+        }
+        
+        if ($model->update($playerId, $updateData)) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Payment status updated successfully'
+            ]);
+        }
+        
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Failed to update payment status'
+        ]);
+    }
+
     public function verificationDashboard()
     {
         $model = new TrialPlayerModel();
