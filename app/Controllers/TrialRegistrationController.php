@@ -78,29 +78,17 @@ class TrialRegistrationController extends BaseController
 
         // Calculate cricket type fees
         $fees = $this->getCricketTypeFees($player['cricket_type']);
-        $balanceAmount = $fees; // Default: full amount to collect
-        $tShirtFee = 199;
+        $balanceAmount = 0;
 
-        // Determine amount to collect based on payment status
         if ($player['payment_type'] === 'partial') {
-            // Player paid ₹199 for T-shirt, collect remaining cricket type fee
-            $balanceAmount = $fees - $tShirtFee;
-        } elseif ($player['payment_type'] === 'full') {
-            // Player paid full amount online, no collection needed
-            $balanceAmount = 0;
+            $balanceAmount = $fees - 199;
         }
-        // Default case: payment_type = 'none' - collect full amount (₹199 + cricket type fee)
 
         return $this->response->setJSON([
             'success' => true,
             'player' => $player,
             'balance_amount' => $balanceAmount,
-            'total_fees' => $fees,
-            'payment_breakdown' => [
-                'tshirt_fee' => $tShirtFee,
-                'cricket_type_fee' => $fees - $tShirtFee,
-                'amount_to_collect' => $balanceAmount
-            ]
+            'total_fees' => $fees
         ]);
     }
 
@@ -135,9 +123,7 @@ class TrialRegistrationController extends BaseController
             'bowler' => 999,
             'batsman' => 999,
             'wicket-keeper' => 1199,
-            'all-rounder' => 1199,
-            'wicket keeper' => 1199, // Support legacy format
-            'all rounder' => 1199    // Support legacy format
+            'all-rounder' => 1199
         ];
 
         return $fees[$cricketType] ?? 999;

@@ -547,9 +547,7 @@ const cricketTypeFees = {
     'bowler': 999,
     'batsman': 999,
     'wicket-keeper': 1199,
-    'all-rounder': 1199,
-    'wicket keeper': 1199, // Support legacy format
-    'all rounder': 1199    // Support legacy format
+    'all-rounder': 1199
 };
 
 verificationForm.addEventListener('submit', function(e) {
@@ -577,7 +575,7 @@ verificationForm.addEventListener('submit', function(e) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            displayPlayerDetails(data.player, data.total_fees, data.balance_amount, data.payment_breakdown);
+            displayPlayerDetails(data.player, data.total_fees);
             playerDetailsCard.style.display = 'block';
         } else {
             alert(data.message);
@@ -594,28 +592,9 @@ verificationForm.addEventListener('submit', function(e) {
     });
 });
 
-function displayPlayerDetails(player, totalFees, balanceAmount = 0, paymentBreakdown = null) {
+function displayPlayerDetails(player, totalFees) {
     const isVerified = player.is_verified == 1;
     const cricketType = player.cricket_type.replace('-', ' ');
-    const paymentType = player.payment_type || 'none';
-    
-    let paymentStatusHtml = '';
-    if (paymentType === 'none') {
-        paymentStatusHtml = `<div class="alert alert-warning">
-            <strong>Payment Status:</strong> No payment made<br>
-            <small>Collect: ₹199 (T-shirt) + ₹${totalFees - 199} (Cricket fee) = ₹${totalFees}</small>
-        </div>`;
-    } else if (paymentType === 'partial') {
-        paymentStatusHtml = `<div class="alert alert-info">
-            <strong>Payment Status:</strong> Partial payment (₹199 for T-shirt)<br>
-            <small>Collect remaining: ₹${totalFees - 199} (Cricket fee only)</small>
-        </div>`;
-    } else if (paymentType === 'full') {
-        paymentStatusHtml = `<div class="alert alert-success">
-            <strong>Payment Status:</strong> Full payment completed online<br>
-            <small>No payment collection needed (T-shirt included)</small>
-        </div>`;
-    }
     
     const detailsHtml = `
         <div class="row g-3">
@@ -640,7 +619,11 @@ function displayPlayerDetails(player, totalFees, balanceAmount = 0, paymentBreak
             </div>
         </div>
         <hr class="my-3" style="border-color: var(--border-color);">
-        ${paymentStatusHtml}
+        <div class="row">
+            <div class="col-12">
+                <strong class="text-muted">Total Fee:</strong> <span class="h5 text-success">₹${totalFees}</span>
+            </div>
+        </div>
         <hr class="my-3" style="border-color: var(--border-color);">
         ${isVerified ? `
             <div class="alert alert-success">
@@ -656,8 +639,8 @@ function displayPlayerDetails(player, totalFees, balanceAmount = 0, paymentBreak
             ` : ''}
         ` : `
             <div class="d-grid">
-                <button class="btn btn-success btn-modern btn-lg" onclick="openFeeCollectionModal(${player.id}, ${balanceAmount || totalFees}, '${player.name}', '${cricketType}', '${paymentType}')">
-                    <i class="fas fa-rupee-sign me-2"></i>${balanceAmount > 0 ? 'Collect Fee &' : ''} Verify Player
+                <button class="btn btn-success btn-modern btn-lg" onclick="openFeeCollectionModal(${player.id}, ${totalFees}, '${player.name}', '${cricketType}')">
+                    <i class="fas fa-rupee-sign me-2"></i>Collect Fee & Verify Player
                 </button>
             </div>
         `}
@@ -666,58 +649,26 @@ function displayPlayerDetails(player, totalFees, balanceAmount = 0, paymentBreak
     document.getElementById('playerDetails').innerHTML = detailsHtml;
 }
 
-function openFeeCollectionModal(playerId, amountToCollect, playerName, cricketType, paymentType = 'none') {
+function openFeeCollectionModal(playerId, totalFees, playerName, cricketType) {
     document.getElementById('playerId').value = playerId;
-    
-    let collectionText = '';
-    let processSteps = '';
-    
-    if (paymentType === 'none') {
-        collectionText = `<strong>Amount to Collect:</strong> <span class="h5">₹${amountToCollect}</span><br>
-                         <small>(₹199 T-shirt fee + ₹${amountToCollect - 199} cricket type fee)</small>`;
-        processSteps = `1. Collect ₹${amountToCollect} in cash from the player<br>
-                       2. Give T-shirt to player<br>
-                       3. Check confirmations below<br>
-                       4. Complete verification`;
-    } else if (paymentType === 'partial') {
-        collectionText = `<strong>Amount to Collect:</strong> <span class="h5">₹${amountToCollect}</span><br>
-                         <small>(Cricket type fee only - T-shirt already paid for)</small>`;
-        processSteps = `1. Collect ₹${amountToCollect} in cash from the player<br>
-                       2. Give T-shirt to player (already paid for)<br>
-                       3. Check confirmations below<br>
-                       4. Complete verification`;
-    } else if (paymentType === 'full') {
-        collectionText = `<strong>No payment collection needed</strong><br>
-                         <small>(Full payment completed online)</small>`;
-        processSteps = `1. No payment collection required<br>
-                       2. Give T-shirt to player (included in online payment)<br>
-                       3. Check confirmations below<br>
-                       4. Complete verification`;
-    }
     
     const feeDetailsHtml = `
         <div class="alert alert-info">
             <h6 class="mb-2"><i class="fas fa-user me-2"></i>${playerName}</h6>
             <p class="mb-2"><strong>Cricket Type:</strong> ${cricketType.charAt(0).toUpperCase() + cricketType.slice(1)}</p>
-            <p class="mb-0">${collectionText}</p>
+            <p class="mb-0"><strong>Total Fee to Collect:</strong> <span class="h5">₹${totalFees}</span></p>
         </div>
         <div class="alert alert-warning">
             <i class="fas fa-info-circle me-2"></i>
-            <strong>Verification Process:</strong><br>
-            <small>${processSteps}</small>
+            <strong>Ground Collection Process:</strong><br>
+            <small>1. Collect ₹${totalFees} in cash from the player<br>
+            2. Check the "Fee collected" checkbox below<br>
+            3. Give t-shirt to player if available<br>
+            4. Complete verification</small>
         </div>
     `;
     
     document.getElementById('feeDetails').innerHTML = feeDetailsHtml;
-    
-    // Update fee collection checkbox text based on payment type
-    const feeCollectedLabel = document.querySelector('label[for="feeCollected"]');
-    if (amountToCollect > 0) {
-        feeCollectedLabel.textContent = `Fee of ₹${amountToCollect} has been collected in cash`;
-    } else {
-        feeCollectedLabel.textContent = 'No fee collection required (paid online)';
-        document.getElementById('feeCollected').checked = true; // Auto-check if no payment needed
-    }
     
     const modal = new bootstrap.Modal(document.getElementById('feeCollectionModal'));
     modal.show();
