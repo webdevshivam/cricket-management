@@ -110,7 +110,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered" id="playersTable">
+                        <table class="table table-dark table-striped table-bordered" id="playersTable">
                             <thead class="table-dark">
                                 <tr>
                                     <th width="40"><input class="form-check-input" type="checkbox" id="selectAll" /></th>
