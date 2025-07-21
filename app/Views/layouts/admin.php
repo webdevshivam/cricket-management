@@ -49,7 +49,7 @@
 
 <body>
   <!-- Sidebar -->
-  <nav id="sidebar" class="sidebar" style="overflow-y: auto;">
+  <nav id="sidebar" class="sidebar">
     <div class="sidebar-header">
       <h3><i class="fas fa-trophy text-warning"></i> Cricket Admin</h3>
     </div>

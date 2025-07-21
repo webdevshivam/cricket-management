@@ -32,7 +32,7 @@ body {
 .sidebar {
   min-width: 250px;
   max-width: 250px;
-  min-height: 100vh;
+  height: 100vh;
   background: linear-gradient(
     180deg,
     var(--secondary-black) 0%,
@@ -45,6 +45,8 @@ body {
   left: 0;
   z-index: 1000;
   border-right: 2px solid var(--accent-gold);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .sidebar.active {
