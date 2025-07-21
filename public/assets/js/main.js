@@ -47,6 +47,24 @@ function initializeSidebar() {
     content.toggleClass('active');
   });
 
+  // Accordion behavior for dropdown menus
+  $('.sidebar .dropdown-toggle').on('click', function(e) {
+    e.preventDefault();
+    
+    const targetCollapse = $(this).attr('href');
+    const isCurrentlyOpen = $(targetCollapse).hasClass('show');
+    
+    // Close all other dropdowns
+    $('.sidebar .collapse').removeClass('show');
+    $('.sidebar .dropdown-toggle').attr('aria-expanded', 'false');
+    
+    // If the clicked dropdown wasn't open, open it
+    if (!isCurrentlyOpen) {
+      $(targetCollapse).addClass('show');
+      $(this).attr('aria-expanded', 'true');
+    }
+  });
+
   // Navigation click handlers
 }
 
