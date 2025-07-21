@@ -1,4 +1,3 @@
-
 <?= $this->extend('layouts/admin') ?>
 
 <?= $this->section('content') ?>
@@ -111,7 +110,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered" id="playersTable">
+                        <table class="table table-dark table-striped table-bordered" id="playersTable">
                             <thead class="table-dark">
                                 <tr>
                                     <th width="40"><input class="form-check-input" type="checkbox" id="selectAll" /></th>
@@ -145,7 +144,7 @@
                                             </td>
                                             <td><?= esc($reg['city']) ?></td>
                                             <td>
-                                                <?php 
+                                                <?php
                                                 $isVerified = ($reg['is_verified'] ?? 0) == 1;
                                                 $fees = getCricketTypeFees($reg['cricket_type']);
                                                 ?>
@@ -262,119 +261,119 @@
 </div>
 
 <script>
-// Get cricket type fees
-function getCricketTypeFees(cricketType) {
-    const fees = {
-        'bowler': 999,
-        'batsman': 999,
-        'wicket-keeper': 1199,
-        'all-rounder': 1199
-    };
-    return fees[cricketType] || 999;
-}
-
-// Update stats on page load
-document.addEventListener('DOMContentLoaded', function() {
-    updateStats();
-    updateBulkButtons();
-});
-
-// Select All checkbox functionality
-document.getElementById('selectAll').addEventListener('change', function() {
-    const checkboxes = document.querySelectorAll('.player-checkbox');
-    checkboxes.forEach(cb => cb.checked = this.checked);
-    updateBulkButtons();
-});
-
-// Individual checkbox change
-document.addEventListener('change', function(e) {
-    if (e.target.classList.contains('player-checkbox')) {
-        updateBulkButtons();
+    // Get cricket type fees
+    function getCricketTypeFees(cricketType) {
+        const fees = {
+            'bowler': 999,
+            'batsman': 999,
+            'wicket-keeper': 1199,
+            'all-rounder': 1199
+        };
+        return fees[cricketType] || 999;
     }
-});
 
-function updateStats() {
-    const rows = document.querySelectorAll('#playersTable tbody tr');
-    let verified = 0;
-    let pending = 0;
-    let totalCollection = 0;
-    
-    rows.forEach(row => {
-        const statusCell = row.cells[6];
-        if (statusCell && statusCell.innerHTML.includes('Verified')) {
-            verified++;
-            // Add collection amount based on cricket type
-            const cricketTypeCell = row.cells[4];
-            if (cricketTypeCell) {
-                const cricketType = cricketTypeCell.textContent.toLowerCase().trim();
-                totalCollection += getCricketTypeFees(cricketType);
+    // Update stats on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateStats();
+        updateBulkButtons();
+    });
+
+    // Select All checkbox functionality
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.player-checkbox');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        updateBulkButtons();
+    });
+
+    // Individual checkbox change
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('player-checkbox')) {
+            updateBulkButtons();
+        }
+    });
+
+    function updateStats() {
+        const rows = document.querySelectorAll('#playersTable tbody tr');
+        let verified = 0;
+        let pending = 0;
+        let totalCollection = 0;
+
+        rows.forEach(row => {
+            const statusCell = row.cells[6];
+            if (statusCell && statusCell.innerHTML.includes('Verified')) {
+                verified++;
+                // Add collection amount based on cricket type
+                const cricketTypeCell = row.cells[4];
+                if (cricketTypeCell) {
+                    const cricketType = cricketTypeCell.textContent.toLowerCase().trim();
+                    totalCollection += getCricketTypeFees(cricketType);
+                }
+            } else if (statusCell && statusCell.innerHTML.includes('Pending')) {
+                pending++;
             }
-        } else if (statusCell && statusCell.innerHTML.includes('Pending')) {
-            pending++;
-        }
-    });
-    
-    document.getElementById('verifiedCount').textContent = verified;
-    document.getElementById('pendingCount').textContent = pending;
-    document.getElementById('totalCollection').textContent = totalCollection.toLocaleString();
-}
+        });
 
-function updateBulkButtons() {
-    const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
-    const count = checkedBoxes.length;
-    
-    document.getElementById('selectedCount').textContent = count;
-    document.getElementById('bulkDeleteBtn').disabled = count === 0;
-    document.getElementById('bulkPendingBtn').disabled = count === 0;
-}
+        document.getElementById('verifiedCount').textContent = verified;
+        document.getElementById('pendingCount').textContent = pending;
+        document.getElementById('totalCollection').textContent = totalCollection.toLocaleString();
+    }
 
-// Verify single player
-function verifyPlayer(mobile) {
-    window.open(`<?= base_url('admin/trial-registration/verification') ?>?mobile=${mobile}`, '_blank');
-}
+    function updateBulkButtons() {
+        const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
+        const count = checkedBoxes.length;
 
-// View player details
-function viewPlayerDetails(playerId) {
-    // Implementation for viewing player details
-    const modal = new bootstrap.Modal(document.getElementById('playerDetailsModal'));
-    modal.show();
-}
+        document.getElementById('selectedCount').textContent = count;
+        document.getElementById('bulkDeleteBtn').disabled = count === 0;
+        document.getElementById('bulkPendingBtn').disabled = count === 0;
+    }
 
-// Show collection report
-function showCollectionReport() {
-    const modal = new bootstrap.Modal(document.getElementById('collectionModal'));
-    
-    // Generate collection report
-    const report = generateCollectionReport();
-    document.getElementById('collectionReport').innerHTML = report;
-    
-    modal.show();
-}
+    // Verify single player
+    function verifyPlayer(mobile) {
+        window.open(`<?= base_url('admin/trial-registration/verification') ?>?mobile=${mobile}`, '_blank');
+    }
 
-function generateCollectionReport() {
-    const rows = document.querySelectorAll('#playersTable tbody tr');
-    let totalCollected = 0;
-    let verifiedPlayers = [];
-    
-    rows.forEach(row => {
-        const statusCell = row.cells[6];
-        if (statusCell && statusCell.innerHTML.includes('Verified')) {
-            const name = row.cells[2].querySelector('.fw-bold').textContent;
-            const mobile = row.cells[3].textContent;
-            const cricketType = row.cells[4].textContent.trim();
-            const fees = getCricketTypeFees(cricketType.toLowerCase());
-            
-            verifiedPlayers.push({
-                name: name,
-                mobile: mobile,
-                cricketType: cricketType,
-                fees: fees
-            });
-            totalCollected += fees;
-        }
-    });
-    
-    let html = `
+    // View player details
+    function viewPlayerDetails(playerId) {
+        // Implementation for viewing player details
+        const modal = new bootstrap.Modal(document.getElementById('playerDetailsModal'));
+        modal.show();
+    }
+
+    // Show collection report
+    function showCollectionReport() {
+        const modal = new bootstrap.Modal(document.getElementById('collectionModal'));
+
+        // Generate collection report
+        const report = generateCollectionReport();
+        document.getElementById('collectionReport').innerHTML = report;
+
+        modal.show();
+    }
+
+    function generateCollectionReport() {
+        const rows = document.querySelectorAll('#playersTable tbody tr');
+        let totalCollected = 0;
+        let verifiedPlayers = [];
+
+        rows.forEach(row => {
+            const statusCell = row.cells[6];
+            if (statusCell && statusCell.innerHTML.includes('Verified')) {
+                const name = row.cells[2].querySelector('.fw-bold').textContent;
+                const mobile = row.cells[3].textContent;
+                const cricketType = row.cells[4].textContent.trim();
+                const fees = getCricketTypeFees(cricketType.toLowerCase());
+
+                verifiedPlayers.push({
+                    name: name,
+                    mobile: mobile,
+                    cricketType: cricketType,
+                    fees: fees
+                });
+                totalCollected += fees;
+            }
+        });
+
+        let html = `
         <div class="alert alert-success">
             <h6><i class="fas fa-rupee-sign"></i> Total Ground Collection: ₹${totalCollected.toLocaleString()}</h6>
         </div>
@@ -390,9 +389,9 @@ function generateCollectionReport() {
                 </thead>
                 <tbody>
     `;
-    
-    verifiedPlayers.forEach(player => {
-        html += `
+
+        verifiedPlayers.forEach(player => {
+            html += `
             <tr>
                 <td>${player.name}</td>
                 <td>${player.mobile}</td>
@@ -400,125 +399,126 @@ function generateCollectionReport() {
                 <td>₹${player.fees}</td>
             </tr>
         `;
-    });
-    
-    html += `
+        });
+
+        html += `
                 </tbody>
             </table>
         </div>
     `;
-    
-    return html;
-}
 
-// Bulk delete players
-function bulkDelete() {
-    const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
-    
-    if (checkedBoxes.length === 0) {
-        alert('Please select at least one player to delete');
-        return;
+        return html;
     }
-    
-    if (confirm(`Are you sure you want to delete ${checkedBoxes.length} selected players?`)) {
-        const playerIds = Array.from(checkedBoxes).map(cb => cb.value);
-        
-        const formData = new FormData();
-        formData.append('player_ids', JSON.stringify(playerIds));
-        
-        fetch('<?= base_url('admin/trial-registration/bulk-delete') ?>', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(`Deleted ${playerIds.length} players successfully`);
-                location.reload();
-            } else {
-                alert(data.message || 'Failed to delete players');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred during deletion');
-        });
-    }
-}
 
-// Mark as pending
-function bulkMarkPending() {
-    const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
-    
-    if (checkedBoxes.length === 0) {
-        alert('Please select at least one player');
-        return;
-    }
-    
-    if (confirm(`Mark ${checkedBoxes.length} selected players as pending verification?`)) {
-        const playerIds = Array.from(checkedBoxes).map(cb => cb.value);
-        
-        const formData = new FormData();
-        formData.append('player_ids', JSON.stringify(playerIds));
-        formData.append('action', 'mark_pending');
-        
-        fetch('<?= base_url('admin/trial-registration/bulk-update-status') ?>', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(`Updated ${playerIds.length} players successfully`);
-                location.reload();
-            } else {
-                alert(data.message || 'Failed to update players');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred during update');
-        });
-    }
-}
+    // Bulk delete players
+    function bulkDelete() {
+        const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
 
-// Delete single player
-function deletePlayer(playerId) {
-    if (confirm('Are you sure you want to delete this player?')) {
-        const formData = new FormData();
-        formData.append('player_ids', JSON.stringify([playerId]));
-        
-        fetch('<?= base_url('admin/trial-registration/bulk-delete') ?>', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Player deleted successfully');
-                location.reload();
-            } else {
-                alert(data.message || 'Failed to delete player');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred during deletion');
-        });
-    }
-}
+        if (checkedBoxes.length === 0) {
+            alert('Please select at least one player to delete');
+            return;
+        }
 
-<?php
-function getCricketTypeFees($cricketType) {
-    $fees = [
-        'bowler' => 999,
-        'batsman' => 999,
-        'wicket-keeper' => 1199,
-        'all-rounder' => 1199
-    ];
-    return $fees[$cricketType] ?? 999;
-}
-?>
+        if (confirm(`Are you sure you want to delete ${checkedBoxes.length} selected players?`)) {
+            const playerIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+            const formData = new FormData();
+            formData.append('player_ids', JSON.stringify(playerIds));
+
+            fetch('<?= base_url('admin/trial-registration/bulk-delete') ?>', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Deleted ${playerIds.length} players successfully`);
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Failed to delete players');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during deletion');
+                });
+        }
+    }
+
+    // Mark as pending
+    function bulkMarkPending() {
+        const checkedBoxes = document.querySelectorAll('.player-checkbox:checked');
+
+        if (checkedBoxes.length === 0) {
+            alert('Please select at least one player');
+            return;
+        }
+
+        if (confirm(`Mark ${checkedBoxes.length} selected players as pending verification?`)) {
+            const playerIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+            const formData = new FormData();
+            formData.append('player_ids', JSON.stringify(playerIds));
+            formData.append('action', 'mark_pending');
+
+            fetch('<?= base_url('admin/trial-registration/bulk-update-status') ?>', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`Updated ${playerIds.length} players successfully`);
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Failed to update players');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during update');
+                });
+        }
+    }
+
+    // Delete single player
+    function deletePlayer(playerId) {
+        if (confirm('Are you sure you want to delete this player?')) {
+            const formData = new FormData();
+            formData.append('player_ids', JSON.stringify([playerId]));
+
+            fetch('<?= base_url('admin/trial-registration/bulk-delete') ?>', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Player deleted successfully');
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Failed to delete player');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred during deletion');
+                });
+        }
+    }
+
+    <?php
+    function getCricketTypeFees($cricketType)
+    {
+        $fees = [
+            'bowler' => 999,
+            'batsman' => 999,
+            'wicket-keeper' => 1199,
+            'all-rounder' => 1199
+        ];
+        return $fees[$cricketType] ?? 999;
+    }
+    ?>
 </script>
 
 <?= $this->endSection() ?>
