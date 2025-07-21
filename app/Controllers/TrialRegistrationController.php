@@ -7,6 +7,7 @@ use App\Models\QrCodeSettingModel;
 use App\Models\TrialcitiesModel;
 use App\Models\TrialPlayerModel;
 use CodeIgniter\HTTP\ResponseInterface;
+use TCPDF;
 
 class TrialRegistrationController extends BaseController
 {
@@ -52,5 +53,86 @@ class TrialRegistrationController extends BaseController
         $data['pager'] = $model->pager;
 
         return view('admin/trial/registration', $data);
+    }
+
+    public function exportPdf()
+    {
+        $model = new TrialPlayerModel();
+        $registrations = $model->orderBy('id', 'DESC')->findAll();
+
+        // Create new PDF document
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+        // Set document information
+        $pdf->SetCreator('MPCL Cricket League');
+        $pdf->SetAuthor('Admin');
+        $pdf->SetTitle('Trial Registrations Report');
+        $pdf->SetSubject('Trial Registrations');
+
+        // Set default header data
+        $pdf->SetHeaderData('', 0, 'MPCL Trial Registrations', 'Generated on ' . date('Y-m-d H:i:s'));
+
+        // Set header and footer fonts
+        $pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+
+        // Set default monospaced font
+        $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+        // Set margins
+        $pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+        $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+        $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+
+        // Set auto page breaks
+        $pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+        // Add a page
+        $pdf->AddPage();
+
+        // Set font
+        $pdf->SetFont('helvetica', '', 10);
+
+        // Create HTML content
+        $html = '<h2 style="text-align: center; color: #333;">Trial Registrations Report</h2>';
+        $html .= '<table border="1" cellpadding="5" cellspacing="0" style="width: 100%;">';
+        $html .= '<thead>';
+        $html .= '<tr style="background-color: #f8f9fa;">';
+        $html .= '<th><strong>S.No</strong></th>';
+        $html .= '<th><strong>Name</strong></th>';
+        $html .= '<th><strong>Email</strong></th>';
+        $html .= '<th><strong>Mobile</strong></th>';
+        $html .= '<th><strong>Age</strong></th>';
+        $html .= '<th><strong>City</strong></th>';
+        $html .= '<th><strong>Cricket Type</strong></th>';
+        $html .= '<th><strong>Registered On</strong></th>';
+        $html .= '</tr>';
+        $html .= '</thead>';
+        $html .= '<tbody>';
+
+        $i = 1;
+        foreach ($registrations as $reg) {
+            $html .= '<tr>';
+            $html .= '<td>' . $i++ . '</td>';
+            $html .= '<td>' . htmlspecialchars($reg['name']) . '</td>';
+            $html .= '<td>' . htmlspecialchars($reg['email']) . '</td>';
+            $html .= '<td>' . htmlspecialchars($reg['mobile']) . '</td>';
+            $html .= '<td>' . htmlspecialchars($reg['age']) . '</td>';
+            $html .= '<td>' . htmlspecialchars($reg['city']) . '</td>';
+            $html .= '<td>' . htmlspecialchars($reg['cricket_type']) . '</td>';
+            $html .= '<td>' . date('d M Y', strtotime($reg['created_at'] ?? '')) . '</td>';
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody>';
+        $html .= '</table>';
+        $html .= '<br><p style="text-align: center; font-size: 10px; color: #666;">Total Registrations: ' . count($registrations) . '</p>';
+
+        // Print text using writeHTMLCell()
+        $pdf->writeHTML($html, true, false, true, false, '');
+
+        // Close and output PDF document
+        $filename = 'trial_registrations_' . date('Y-m-d_H-i-s') . '.pdf';
+        $pdf->Output($filename, 'D'); // 'D' forces download
     }
 }

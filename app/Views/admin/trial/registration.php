@@ -60,6 +60,9 @@
     <div class="mt-3 d-flex gap-2">
       <button type="submit" name="action" value="delete" class="btn btn-danger">Delete Selected</button>
       <button type="submit" name="action" value="update" class="btn btn-primary">Update Payment Status</button>
+      <a href="<?= site_url('admin/trial-registration/export-pdf') ?>" class="btn btn-success">
+        <i class="fas fa-file-pdf"></i> Export to PDF
+      </a>
     </div>
   </form>
 
