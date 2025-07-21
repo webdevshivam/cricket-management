@@ -67,6 +67,9 @@ $routes->group('admin/trial-registration', ['filter' => 'role:admin'], function 
   $routes->post('update-single', 'TrialRegistrationController::updateSingle');
   $routes->post('bulk-update', 'TrialRegistrationController::bulkUpdate');
   $routes->post('bulk-delete', 'TrialRegistrationController::bulkDelete');
+  $routes->post('bulk-update-status', 'TrialRegistrationController::bulkUpdateStatus');
+  $routes->get('today-verifications', 'TrialRegistrationController::todayVerifications');
+  $routes->get('today-collection', 'TrialRegistrationController::todayCollection');
 });
 
 

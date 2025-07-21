@@ -260,6 +260,82 @@ class TrialRegistrationController extends BaseController
             'message' => "Deleted {$deleted} players successfully"
         ]);
     }
+    
+    public function bulkUpdateStatus()
+    {
+        $data = $this->request->getPost();
+        $playerIds = json_decode($data['player_ids'], true);
+        $action = $data['action'] ?? '';
+        
+        if (empty($playerIds)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'No players selected'
+            ]);
+        }
+        
+        $model = new TrialPlayerModel();
+        $updated = 0;
+        
+        $updateData = [];
+        if ($action === 'mark_pending') {
+            $updateData = [
+                'is_verified' => 0,
+                'verified_at' => null,
+                't_shirt_given' => 0,
+                'payment_status' => 'pending'
+            ];
+        }
+        
+        if (!empty($updateData)) {
+            foreach ($playerIds as $playerId) {
+                if ($model->update($playerId, $updateData)) {
+                    $updated++;
+                }
+            }
+        }
+        
+        return $this->response->setJSON([
+            'success' => $updated > 0,
+            'message' => "Updated {$updated} players successfully"
+        ]);
+    }
+    
+    public function todayVerifications()
+    {
+        $model = new TrialPlayerModel();
+        $today = date('Y-m-d');
+        
+        $verifications = $model->where('is_verified', 1)
+                              ->where('DATE(verified_at)', $today)
+                              ->orderBy('verified_at', 'DESC')
+                              ->findAll();
+        
+        return $this->response->setJSON([
+            'success' => true,
+            'verifications' => $verifications
+        ]);
+    }
+    
+    public function todayCollection()
+    {
+        $model = new TrialPlayerModel();
+        $today = date('Y-m-d');
+        
+        $verifiedToday = $model->where('is_verified', 1)
+                              ->where('DATE(verified_at)', $today)
+                              ->findAll();
+        
+        $totalCollection = 0;
+        foreach ($verifiedToday as $player) {
+            $totalCollection += $this->getCricketTypeFees($player['cricket_type']);
+        }
+        
+        return $this->response->setJSON([
+            'success' => true,
+            'collection' => $totalCollection
+        ]);
+    }
 
     public function exportPdf()
     {
