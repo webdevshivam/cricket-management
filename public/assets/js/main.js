@@ -53,16 +53,31 @@ function initializeSidebar() {
     
     const targetCollapse = $(this).attr('href');
     const isCurrentlyOpen = $(targetCollapse).hasClass('show');
+    const clickedToggle = $(this);
     
-    // Close all other dropdowns
-    $('.sidebar .collapse').removeClass('show');
-    $('.sidebar .dropdown-toggle').attr('aria-expanded', 'false');
+    // Close all other dropdowns with smooth animation
+    $('.sidebar .collapse.show').each(function() {
+      if (this !== $(targetCollapse)[0]) {
+        $(this).removeClass('show');
+        $('.sidebar .dropdown-toggle[href="#' + this.id + '"]').attr('aria-expanded', 'false');
+        
+        // Rotate arrow back
+        $('.sidebar .dropdown-toggle[href="#' + this.id + '"]').removeClass('expanded');
+      }
+    });
     
-    // If the clicked dropdown wasn't open, open it
-    if (!isCurrentlyOpen) {
-      $(targetCollapse).addClass('show');
-      $(this).attr('aria-expanded', 'true');
-    }
+    // Toggle the clicked dropdown
+    setTimeout(() => {
+      if (!isCurrentlyOpen) {
+        $(targetCollapse).addClass('show');
+        clickedToggle.attr('aria-expanded', 'true');
+        clickedToggle.addClass('expanded');
+      } else {
+        $(targetCollapse).removeClass('show');
+        clickedToggle.attr('aria-expanded', 'false');
+        clickedToggle.removeClass('expanded');
+      }
+    }, isCurrentlyOpen ? 0 : 150);
   });
 
   // Navigation click handlers
