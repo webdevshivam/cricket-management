@@ -1,79 +1,264 @@
 <?= $this->extend('layouts/admin') ?>
 
 <?= $this->section('content') ?>
+<style>
+/* Modern Minimalistic Design */
+.admin-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: 12px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    border: 1px solid #f1f3f4;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: #2d3748;
+}
+
+.stat-label {
+    color: #718096;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.icon-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.icon-success { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
+.icon-warning { background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%); }
+.icon-info { background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%); }
+
+.action-buttons {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+}
+
+.btn-modern {
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 500;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-modern-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-modern-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.data-table {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.table-modern {
+    margin: 0;
+    border: none;
+}
+
+.table-modern thead th {
+    background: #f8f9fa;
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.table-modern tbody td {
+    padding: 1rem;
+    border: none;
+    border-bottom: 1px solid #f1f3f4;
+    vertical-align: middle;
+}
+
+.table-modern tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.status-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-no-payment { background: #fed7d7; color: #c53030; }
+.badge-partial { background: #faf089; color: #975a16; }
+.badge-full { background: #c6f6d5; color: #2f855a; }
+.badge-verified { background: #bee3f8; color: #2b6cb0; }
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 2px;
+    transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+    transform: scale(1.1);
+}
+
+.payment-select {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    background: white;
+    margin-top: 0.5rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #a0aec0;
+}
+
+.bulk-actions {
+    background: #f8f9fa;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    margin: 0;
+}
+
+.breadcrumb-modern {
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+}
+
+.breadcrumb-modern a {
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+}
+
+.breadcrumb-modern .active {
+    color: white;
+}
+</style>
+
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <div class="page-title-box">
-                <h4 class="page-title">Trial Player Management</h4>
-                <div class="page-title-right">
-                    <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="<?= base_url('admin/dashboard') ?>">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Trial Players</li>
-                    </ol>
+    <!-- Modern Header -->
+    <div class="admin-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="page-title">Trial Player Management</h1>
+                    <p class="mb-0 opacity-75">Manage and track trial registrations</p>
                 </div>
+                <nav class="breadcrumb-modern">
+                    <a href="<?= base_url('admin/dashboard') ?>">Dashboard</a>
+                    <span class="mx-2">/</span>
+                    <span class="active">Trial Players</span>
+                </nav>
             </div>
         </div>
     </div>
 
-    <!-- Quick Stats Cards -->
-    <div class="row mb-4">
+    <!-- Modern Stats Cards -->
+    <div class="row g-4 mb-4">
         <div class="col-lg-3 col-md-6">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-1 text-white"><?= count($registrations ?? []) ?></h4>
-                            <p class="mb-0">Total Players</p>
-                        </div>
-                        <div>
-                            <i class="fas fa-users fa-2x opacity-75"></i>
-                        </div>
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="stat-number"><?= count($registrations ?? []) ?></h3>
+                        <p class="stat-label">Total Players</p>
+                    </div>
+                    <div class="stat-icon icon-primary">
+                        <i class="fas fa-users"></i>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-1 text-white" id="verifiedCount">0</h4>
-                            <p class="mb-0">Verified Players</p>
-                        </div>
-                        <div>
-                            <i class="fas fa-check-circle fa-2x opacity-75"></i>
-                        </div>
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="stat-number" id="verifiedCount">0</h3>
+                        <p class="stat-label">Verified Players</p>
+                    </div>
+                    <div class="stat-icon icon-success">
+                        <i class="fas fa-check-circle"></i>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="card bg-warning text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-1 text-white" id="pendingCount">0</h4>
-                            <p class="mb-0">Pending Verification</p>
-                        </div>
-                        <div>
-                            <i class="fas fa-clock fa-2x opacity-75"></i>
-                        </div>
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="stat-number" id="pendingCount">0</h3>
+                        <p class="stat-label">Pending Verification</p>
+                    </div>
+                    <div class="stat-icon icon-warning">
+                        <i class="fas fa-clock"></i>
                     </div>
                 </div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6">
-            <div class="card bg-info text-white">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <h4 class="mb-1 text-white">₹<span id="totalCollection">0</span></h4>
-                            <p class="mb-0">Ground Collection</p>
-                        </div>
-                        <div>
-                            <i class="fas fa-rupee-sign fa-2x opacity-75"></i>
-                        </div>
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="stat-number">₹<span id="totalCollection">0</span></h3>
+                        <p class="stat-label">Ground Collection</p>
+                    </div>
+                    <div class="stat-icon icon-info">
+                        <i class="fas fa-rupee-sign"></i>
                     </div>
                 </div>
             </div>
@@ -81,169 +266,165 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="row mb-3">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex gap-2">
-                    <a href="<?= base_url('admin/trial-registration/verification') ?>" class="btn btn-primary">
-                        <i class="fas fa-user-check me-2"></i>Player Verification
-                    </a>
-                    <button type="button" class="btn btn-success" onclick="showCollectionReport()">
-                        <i class="fas fa-chart-bar me-2"></i>Collection Report
-                    </button>
-                </div>
-                <div>
-                    <a href="<?= site_url('admin/trial-registration/export-pdf') ?>" class="btn btn-outline-secondary">
-                        <i class="fas fa-file-pdf me-2"></i>Export PDF
-                    </a>
-                </div>
+    <div class="action-buttons">
+        <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex gap-3">
+                <a href="<?= base_url('admin/trial-registration/verification') ?>" class="btn btn-modern btn-modern-primary">
+                    <i class="fas fa-user-check me-2"></i>Player Verification
+                </a>
+                <button type="button" class="btn btn-modern btn-outline-success" onclick="showCollectionReport()">
+                    <i class="fas fa-chart-bar me-2"></i>Collection Report
+                </button>
+            </div>
+            <div>
+                <a href="<?= site_url('admin/trial-registration/export-pdf') ?>" class="btn btn-modern btn-outline-secondary">
+                    <i class="fas fa-file-pdf me-2"></i>Export PDF
+                </a>
             </div>
         </div>
     </div>
 
     <!-- Players Table -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Registered Players</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-dark table-striped table-bordered" id="playersTable">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th width="40"><input class="form-check-input" type="checkbox" id="selectAll" /></th>
-                                    <th width="50">#</th>
-                                    <th>Name</th>
-                                    <th>Mobile</th>
-                                    <th>Cricket Type</th>
-                                    <th>City</th>
-                                    <th>Status</th>
-                                    <th width="150">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (!empty($registrations)) : ?>
+    <div class="data-table">
+        <div class="table-responsive">
+            <table class="table table-modern" id="playersTable">
+                <thead>
+                    <tr>
+                        <th width="40"><input class="form-check-input" type="checkbox" id="selectAll" /></th>
+                        <th width="50">#</th>
+                        <th>Player Details</th>
+                        <th>Mobile</th>
+                        <th>Cricket Type</th>
+                        <th>City</th>
+                        <th>Status</th>
+                        <th width="150">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if (!empty($registrations)) : ?>
+                        <?php
+                        $currentPage = $pager->getCurrentPage() ?? 1;
+                        $perPage = $pager->getPerPage() ?? 10;
+                        $i = 1 + ($currentPage - 1) * $perPage;
+                        ?>
+                        <?php foreach ($registrations as $reg) : ?>
+                            <tr>
+                                <td><input type="checkbox" class="form-check-input player-checkbox" value="<?= $reg['id'] ?>" /></td>
+                                <td><span class="text-muted"><?= $i++ ?></span></td>
+                                <td>
+                                    <div>
+                                        <div class="fw-semibold"><?= esc($reg['name']) ?></div>
+                                        <small class="text-muted"><?= esc($reg['email']) ?></small>
+                                    </div>
+                                </td>
+                                <td><span class="fw-medium"><?= esc($reg['mobile']) ?></span></td>
+                                <td>
+                                    <span class="status-badge badge-verified"><?= ucfirst(str_replace('-', ' ', esc($reg['cricket_type']))) ?></span>
+                                </td>
+                                <td><span class="text-muted"><?= esc($reg['city']) ?></span></td>
+                                <td>
                                     <?php
-                                    $currentPage = $pager->getCurrentPage() ?? 1;
-                                    $perPage = $pager->getPerPage() ?? 10;
-                                    $i = 1 + ($currentPage - 1) * $perPage;
+                                    $isVerified = ($reg['is_verified'] ?? 0) == 1;
+                                    $paymentStatus = $reg['payment_status'] ?? 'no_payment';
+                                    $fees = getCricketTypeFees($reg['cricket_type']);
                                     ?>
-                                    <?php foreach ($registrations as $reg) : ?>
-                                        <tr>
-                                            <td><input type="checkbox" class="form-check-input player-checkbox" value="<?= $reg['id'] ?>" /></td>
-                                            <td><?= $i++ ?></td>
-                                            <td>
-                                                <div class="fw-bold"><?= esc($reg['name']) ?></div>
-                                                <small class="text-muted"><?= esc($reg['email']) ?></small>
-                                            </td>
-                                            <td><?= esc($reg['mobile']) ?></td>
-                                            <td>
-                                                <span class="badge bg-info"><?= ucfirst(str_replace('-', ' ', esc($reg['cricket_type']))) ?></span>
-                                            </td>
-                                            <td><?= esc($reg['city']) ?></td>
-                                            <td>
-                                                <?php
-                                                $isVerified = ($reg['is_verified'] ?? 0) == 1;
-                                                $paymentStatus = $reg['payment_status'] ?? 'no_payment';
-                                                $fees = getCricketTypeFees($reg['cricket_type']);
-                                                ?>
 
-                                                <div class="d-flex flex-column">
-                                                    <!-- Payment Status Badge -->
-                                                    <?php if ($paymentStatus === 'no_payment'): ?>
-                                                        <span class="badge bg-danger mb-1">
-                                                            <i class="fas fa-times-circle"></i> No Payment
-                                                        </span>
-                                                    <?php elseif ($paymentStatus === 'partial'): ?>
-                                                        <span class="badge bg-warning mb-1">
-                                                            <i class="fas fa-clock"></i> Partial (₹199)
-                                                        </span>
-                                                        <small class="text-info">Balance: ₹<?= $fees - 199 ?></small>
-                                                    <?php elseif ($paymentStatus === 'full'): ?>
-                                                        <span class="badge bg-success mb-1">
-                                                            <i class="fas fa-check-circle"></i> Full Payment
-                                                        </span>
-                                                    <?php endif; ?>
+                                    <div class="d-flex flex-column gap-1">
+                                        <!-- Payment Status Badge -->
+                                        <?php if ($paymentStatus === 'no_payment'): ?>
+                                            <span class="status-badge badge-no-payment">
+                                                <i class="fas fa-times-circle me-1"></i>No Payment
+                                            </span>
+                                        <?php elseif ($paymentStatus === 'partial'): ?>
+                                            <span class="status-badge badge-partial">
+                                                <i class="fas fa-clock me-1"></i>Partial ₹199
+                                            </span>
+                                            <small class="text-info">Balance: ₹<?= $fees - 199 ?></small>
+                                        <?php elseif ($paymentStatus === 'full'): ?>
+                                            <span class="status-badge badge-full">
+                                                <i class="fas fa-check-circle me-1"></i>Full Payment
+                                            </span>
+                                        <?php endif; ?>
 
-                                                    <!-- Verification Status -->
-                                                    <?php if ($isVerified): ?>
-                                                        <small class="text-success"><i class="fas fa-user-check"></i> Verified</small>
-                                                        <?php if (($reg['t_shirt_given'] ?? 0) == 1): ?>
-                                                            <small class="text-success"><i class="fas fa-tshirt"></i> T-Shirt Given</small>
-                                                        <?php endif; ?>
-                                                    <?php else: ?>
-                                                        <small class="text-muted"><i class="fas fa-user-clock"></i> Not Verified</small>
-                                                    <?php endif; ?>
+                                        <!-- Verification Status -->
+                                        <?php if ($isVerified): ?>
+                                            <small class="text-success">
+                                                <i class="fas fa-user-check me-1"></i>Verified
+                                                <?php if (($reg['t_shirt_given'] ?? 0) == 1): ?>
+                                                    <i class="fas fa-tshirt ms-2"></i>T-Shirt Given
+                                                <?php endif; ?>
+                                            </small>
+                                        <?php else: ?>
+                                            <small class="text-muted">
+                                                <i class="fas fa-user-clock me-1"></i>Not Verified
+                                            </small>
+                                        <?php endif; ?>
 
-                                                    <!-- Payment Status Dropdown -->
-                                                    <select class="form-select form-select-sm mt-1 payment-status-select"
-                                                        data-player-id="<?= $reg['id'] ?>"
-                                                        data-current-status="<?= $paymentStatus ?>">
-                                                        <option value="no_payment" <?= $paymentStatus === 'no_payment' ? 'selected' : '' ?>>No Payment</option>
-                                                        <option value="partial" <?= $paymentStatus === 'partial' ? 'selected' : '' ?>>Partial (₹199)</option>
-                                                        <option value="full" <?= $paymentStatus === 'full' ? 'selected' : '' ?>>Full Payment</option>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="btn-group">
-                                                    <?php if (!$isVerified): ?>
-                                                        <button type="button" class="btn btn-sm btn-primary" onclick="verifyPlayer('<?= $reg['mobile'] ?>')" title="Verify Player">
-                                                            <i class="fas fa-user-check"></i>
-                                                        </button>
-                                                    <?php else: ?>
-                                                        <button type="button" class="btn btn-sm btn-success" disabled title="Already Verified">
-                                                            <i class="fas fa-check"></i>
-                                                        </button>
-                                                    <?php endif; ?>
-                                                    <button type="button" class="btn btn-sm btn-info" onclick="viewPlayerDetails(<?= $reg['id'] ?>)" title="View Details">
-                                                        <i class="fas fa-eye"></i>
-                                                    </button>
-                                                    <button type="button" class="btn btn-sm btn-danger" onclick="deletePlayer(<?= $reg['id'] ?>)" title="Delete Player">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php else : ?>
-                                    <tr>
-                                        <td colspan="8" class="text-center py-4">
-                                            <div class="text-muted">
-                                                <i class="fas fa-users fa-3x mb-3"></i>
-                                                <p>No players registered yet</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
+                                        <!-- Payment Status Dropdown -->
+                                        <select class="payment-select payment-status-select"
+                                            data-player-id="<?= $reg['id'] ?>"
+                                            data-current-status="<?= $paymentStatus ?>">
+                                            <option value="no_payment" <?= $paymentStatus === 'no_payment' ? 'selected' : '' ?>>No Payment</option>
+                                            <option value="partial" <?= $paymentStatus === 'partial' ? 'selected' : '' ?>>Partial ₹199</option>
+                                            <option value="full" <?= $paymentStatus === 'full' ? 'selected' : '' ?>>Full Payment</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <?php if (!$isVerified): ?>
+                                            <button type="button" class="action-btn btn-primary" onclick="verifyPlayer('<?= $reg['mobile'] ?>')" title="Verify Player">
+                                                <i class="fas fa-user-check"></i>
+                                            </button>
+                                        <?php else: ?>
+                                            <button type="button" class="action-btn btn-success" disabled title="Already Verified">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        <?php endif; ?>
+                                        <button type="button" class="action-btn btn-info" onclick="viewPlayerDetails(<?= $reg['id'] ?>)" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button type="button" class="action-btn btn-danger" onclick="deletePlayer(<?= $reg['id'] ?>)" title="Delete Player">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <i class="fas fa-users fa-3x mb-3 text-muted"></i>
+                                <h5 class="text-muted">No players registered yet</h5>
+                                <p class="text-muted">Players will appear here once they complete registration</p>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
 
-                    <!-- Bulk Actions -->
-                    <div class="mt-3 d-flex gap-2 align-items-center">
-                        <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-danger" onclick="bulkDelete()" id="bulkDeleteBtn" disabled>
-                                <i class="fas fa-trash me-2"></i>Delete Selected
-                            </button>
-                            <button type="button" class="btn btn-warning" onclick="bulkMarkPending()" id="bulkPendingBtn" disabled>
-                                <i class="fas fa-undo me-2"></i>Mark as Pending
-                            </button>
-                        </div>
-                        <div class="ms-auto">
-                            <span class="text-muted">Selected: <span id="selectedCount">0</span> players</span>
-                        </div>
-                    </div>
-
-                    <!-- Pagination Links -->
-                    <div class="d-flex justify-content-center mt-4">
-                        <?= $pager->links() ?>
-                    </div>
+        <!-- Bulk Actions -->
+        <div class="bulk-actions">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="bulkDelete()" id="bulkDeleteBtn" disabled>
+                        <i class="fas fa-trash me-1"></i>Delete Selected
+                    </button>
+                    <button type="button" class="btn btn-sm btn-warning" onclick="bulkMarkPending()" id="bulkPendingBtn" disabled>
+                        <i class="fas fa-undo me-1"></i>Mark as Pending
+                    </button>
                 </div>
+                <small class="text-muted">Selected: <span id="selectedCount">0</span> players</small>
             </div>
         </div>
+
+        <!-- Pagination -->
+        <?php if (!empty($registrations)): ?>
+        <div class="d-flex justify-content-center p-3 border-top">
+            <?= $pager->links() ?>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -310,6 +491,17 @@
     document.addEventListener('change', function(e) {
         if (e.target.classList.contains('player-checkbox')) {
             updateBulkButtons();
+        }
+        
+        // Handle payment status change
+        if (e.target.classList.contains('payment-status-select')) {
+            const playerId = e.target.dataset.playerId;
+            const newStatus = e.target.value;
+            const currentStatus = e.target.dataset.currentStatus;
+            
+            if (newStatus !== currentStatus) {
+                updatePaymentStatus(playerId, newStatus, e.target);
+            }
         }
     });
 
@@ -503,6 +695,43 @@
     }
 
     // Delete single player
+    function updatePaymentStatus(playerId, newStatus, selectElement) {
+        const formData = new FormData();
+        formData.append('player_id', playerId);
+        formData.append('payment_status', newStatus);
+        formData.append('payment_type', newStatus === 'no_payment' ? 'none' : newStatus);
+        
+        // Disable select while updating
+        selectElement.disabled = true;
+        
+        fetch('<?= base_url('admin/trial-registration/update-payment-status') ?>', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update current status
+                selectElement.dataset.currentStatus = newStatus;
+                // Reload page to reflect changes
+                location.reload();
+            } else {
+                alert(data.message || 'Failed to update payment status');
+                // Revert select to previous value
+                selectElement.value = selectElement.dataset.currentStatus;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating payment status');
+            // Revert select to previous value
+            selectElement.value = selectElement.dataset.currentStatus;
+        })
+        .finally(() => {
+            selectElement.disabled = false;
+        });
+    }
+
     function deletePlayer(playerId) {
         if (confirm('Are you sure you want to delete this player?')) {
             const formData = new FormData();
