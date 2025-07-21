@@ -63,6 +63,7 @@ $routes->group('admin/trial-registration', ['filter' => 'role:admin'], function 
   $routes->get('verification', 'TrialRegistrationController::verificationDashboard');
   $routes->post('verify', 'TrialRegistrationController::verify');
   $routes->post('update-verification', 'TrialRegistrationController::updateVerification');
+  $routes->get('get-players', 'TrialRegistrationController::getPlayers');
 });
 
 

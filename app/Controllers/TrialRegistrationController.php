@@ -141,6 +141,23 @@ class TrialRegistrationController extends BaseController
         
         return view('admin/trial/verification_dashboard', $data);
     }
+    
+    public function getPlayers()
+    {
+        $model = new TrialPlayerModel();
+        $paymentType = $this->request->getGet('payment_type');
+        
+        if ($paymentType && in_array($paymentType, ['partial', 'full'])) {
+            $model->where('payment_type', $paymentType);
+        }
+        
+        $players = $model->orderBy('created_at', 'DESC')->findAll();
+        
+        return $this->response->setJSON([
+            'success' => true,
+            'players' => $players
+        ]);
+    }
 
     public function exportPdf()
     {

@@ -81,9 +81,60 @@
         </div>
     </div>
 
+    <!-- Filter Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="playerTypeTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all-players" 
+                                    type="button" role="tab" aria-controls="all-players" aria-selected="true">
+                                <i class="fas fa-users me-2"></i>All Players
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tshirt-tab" data-bs-toggle="tab" data-bs-target="#tshirt-players" 
+                                    type="button" role="tab" aria-controls="tshirt-players" aria-selected="false">
+                                <i class="fas fa-tshirt me-2"></i>₹199 T-Shirt Only
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="full-tab" data-bs-toggle="tab" data-bs-target="#full-players" 
+                                    type="button" role="tab" aria-controls="full-players" aria-selected="false">
+                                <i class="fas fa-credit-card me-2"></i>Full Payment
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="playerTypeTabsContent">
+                        <div class="tab-pane fade show active" id="all-players" role="tabpanel" aria-labelledby="all-tab">
+                            <div id="allPlayersList"></div>
+                        </div>
+                        <div class="tab-pane fade" id="tshirt-players" role="tabpanel" aria-labelledby="tshirt-tab">
+                            <div class="alert alert-warning">
+                                <h6><i class="fas fa-info-circle me-2"></i>₹199 T-Shirt Only Players</h6>
+                                <p class="mb-0">These players need to pay balance amount on the ground to participate.</p>
+                            </div>
+                            <div id="tshirtPlayersList"></div>
+                        </div>
+                        <div class="tab-pane fade" id="full-players" role="tabpanel" aria-labelledby="full-tab">
+                            <div class="alert alert-success">
+                                <h6><i class="fas fa-check-circle me-2"></i>Full Payment Players</h6>
+                                <p class="mb-0">These players get free t-shirts and can participate directly.</p>
+                            </div>
+                            <div id="fullPlayersList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Verification Form -->
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6"></div>
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
@@ -162,6 +213,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const verificationForm = document.getElementById('verificationForm');
     const playerDetailsCard = document.getElementById('playerDetailsCard');
     const playerDetails = document.getElementById('playerDetails');
+    
+    // Load player lists by type
+    loadPlayersByType('all');
+    
+    // Tab change event
+    document.querySelectorAll('#playerTypeTabs button').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(event) {
+            const target = event.target.getAttribute('data-bs-target');
+            let type = 'all';
+            if (target === '#tshirt-players') type = 'partial';
+            if (target === '#full-players') type = 'full';
+            loadPlayersByType(type);
+        });
+    });
 
     verificationForm.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -190,6 +255,71 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+function loadPlayersByType(type) {
+    let endpoint = '<?= base_url('admin/trial-registration/get-players') ?>';
+    if (type !== 'all') {
+        endpoint += '?payment_type=' + type;
+    }
+    
+    fetch(endpoint)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayPlayersList(data.players, type);
+            } else {
+                console.error('Failed to load players:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error loading players:', error);
+        });
+}
+
+function displayPlayersList(players, type) {
+    let targetDiv = 'allPlayersList';
+    if (type === 'partial') targetDiv = 'tshirtPlayersList';
+    if (type === 'full') targetDiv = 'fullPlayersList';
+    
+    const container = document.getElementById(targetDiv);
+    
+    if (players.length === 0) {
+        container.innerHTML = '<div class="alert alert-info">No players found in this category.</div>';
+        return;
+    }
+    
+    let html = '<div class="table-responsive"><table class="table table-sm">';
+    html += '<thead><tr><th>Name</th><th>Mobile</th><th>Cricket Type</th><th>City</th><th>Status</th><th>Action</th></tr></thead><tbody>';
+    
+    players.forEach(player => {
+        const statusBadge = player.is_verified ? 
+            '<span class="badge bg-success">Verified</span>' : 
+            '<span class="badge bg-warning">Pending</span>';
+        
+        const actionButton = type === 'partial' ? 
+            `<button class="btn btn-sm btn-warning" onclick="quickVerify('${player.mobile}')">Collect Payment</button>` :
+            `<button class="btn btn-sm btn-success" onclick="quickVerify('${player.mobile}')">Give T-Shirt</button>`;
+        
+        html += `
+            <tr>
+                <td>${player.name}</td>
+                <td>${player.mobile}</td>
+                <td>${player.cricket_type}</td>
+                <td>${player.city}</td>
+                <td>${statusBadge}</td>
+                <td>${actionButton}</td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+}
+
+function quickVerify(mobile) {
+    document.getElementById('mobile').value = mobile;
+    document.getElementById('verificationForm').dispatchEvent(new Event('submit'));
+}
 
 function displayPlayerDetails(player, balanceAmount, totalFees) {
     const isPartialPayment = balanceAmount > 0;
