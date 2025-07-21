@@ -4,7 +4,7 @@
 <style>
 /* Modern Minimalistic Design */
 .admin-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #d4af37 0%, #000000 100%);
     color: white;
     padding: 2rem 0;
     margin-bottom: 2rem;
@@ -12,17 +12,18 @@
 }
 
 .stat-card {
-    background: white;
+    background: #000000;
+    color: #d4af37;
     border-radius: 16px;
     padding: 1.5rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    border: 1px solid #f1f3f4;
+    border: 1px solid #d4af37;
     transition: all 0.3s ease;
     margin-bottom: 1rem;
 }
 
 .stat-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: 0 4px 20px rgba(0,0,0,0.12);
 }
 
@@ -30,11 +31,11 @@
     font-size: 2.5rem;
     font-weight: 700;
     margin: 0;
-    color: #2d3748;
+    color: #d4af37;
 }
 
 .stat-label {
-    color: #718096;
+    color: #d4af37;
     font-size: 0.875rem;
     font-weight: 500;
     margin-top: 0.25rem;
@@ -51,13 +52,14 @@
     color: white;
 }
 
-.icon-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+.icon-primary { background: linear-gradient(135deg, #d4af37 0%, #000000 100%); }
 .icon-success { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
 .icon-warning { background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%); }
 .icon-info { background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%); }
 
 .action-buttons {
-    background: white;
+    background: #000000;
+    color: #d4af37;
     padding: 1.5rem;
     border-radius: 16px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
@@ -73,7 +75,7 @@
 }
 
 .btn-modern-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #d4af37 0%, #000000 100%);
     color: white;
 }
 
@@ -84,7 +86,8 @@
 }
 
 .data-table {
-    background: white;
+    background: #000000;
+    color: #d4af37;
     border-radius: 16px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     overflow: hidden;
@@ -96,11 +99,11 @@
 }
 
 .table-modern thead th {
-    background: #f8f9fa;
+    background: #1a1a1a;
     border: none;
     padding: 1rem;
     font-weight: 600;
-    color: #2d3748;
+    color: #d4af37;
     font-size: 0.875rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -109,12 +112,13 @@
 .table-modern tbody td {
     padding: 1rem;
     border: none;
-    border-bottom: 1px solid #f1f3f4;
+    border-bottom: 1px solid #d4af37;
     vertical-align: middle;
+    color: #d4af37;
 }
 
 .table-modern tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: #1a1a1a;
 }
 
 .status-badge {
@@ -144,7 +148,7 @@
 }
 
 .action-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .payment-select {
@@ -163,7 +167,7 @@
 }
 
 .bulk-actions {
-    background: #f8f9fa;
+    background: #1a1a1a;
     padding: 1rem 1.5rem;
     border-top: 1px solid #e2e8f0;
 }
@@ -191,7 +195,7 @@
 }
 </style>
 
-<div class="container-fluid">
+<div class="container-fluid" style="background: #1a1a1a; min-height: 100vh; padding: 2rem 1rem;">
     <!-- Modern Header -->
     <div class="admin-header">
         <div class="container-fluid">
@@ -492,13 +496,13 @@
         if (e.target.classList.contains('player-checkbox')) {
             updateBulkButtons();
         }
-        
+
         // Handle payment status change
         if (e.target.classList.contains('payment-status-select')) {
             const playerId = e.target.dataset.playerId;
             const newStatus = e.target.value;
             const currentStatus = e.target.dataset.currentStatus;
-            
+
             if (newStatus !== currentStatus) {
                 updatePaymentStatus(playerId, newStatus, e.target);
             }
@@ -700,10 +704,10 @@
         formData.append('player_id', playerId);
         formData.append('payment_status', newStatus);
         formData.append('payment_type', newStatus === 'no_payment' ? 'none' : newStatus);
-        
+
         // Disable select while updating
         selectElement.disabled = true;
-        
+
         fetch('<?= base_url('admin/trial-registration/update-payment-status') ?>', {
             method: 'POST',
             body: formData
