@@ -60,6 +60,9 @@ $routes->group('/admin/grades', ['filter' => 'role:admin'], function ($routes) {
 $routes->group('admin/trial-registration', ['filter' => 'role:admin'], function ($routes) {
   $routes->get('/', 'TrialRegistrationController::adminIndex');
   $routes->get('export-pdf', 'TrialRegistrationController::exportPdf');
+  $routes->get('verification', 'TrialRegistrationController::verificationDashboard');
+  $routes->post('verify', 'TrialRegistrationController::verify');
+  $routes->post('update-verification', 'TrialRegistrationController::updateVerification');
 });
 
 

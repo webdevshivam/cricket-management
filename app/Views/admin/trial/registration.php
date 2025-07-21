@@ -20,6 +20,7 @@
             <th>City</th>
             <th>Role</th>
             <th>Payment Status</th>
+            <th>Verification Status</th>
             <th>Registered On</th>
           </tr>
         </thead>
@@ -41,16 +42,26 @@
                 <td>
                   <select name="payment_status[<?= $reg['id'] ?>]" class="form-select form-select-sm bg-dark text-white">
                     <option value="pending">Pending</option>
-                    <option value="partial">Partial</option>
-                    <option value="full">Full</option>
+                    <option value="partial" <?= ($reg['payment_status'] ?? '') == 'partial' ? 'selected' : '' ?>>Partial</option>
+                    <option value="full" <?= ($reg['payment_status'] ?? '') == 'full' ? 'selected' : '' ?>>Full</option>
                   </select>
+                </td>
+                <td>
+                  <?php
+                  $isVerified = $reg['is_verified'] ?? 0;
+                  if ($isVerified) {
+                    echo '<span class="badge bg-success"><i class="fas fa-check-circle"></i> Verified</span>';
+                  } else {
+                    echo '<span class="badge bg-warning"><i class="fas fa-clock"></i> Pending</span>';
+                  }
+                  ?>
                 </td>
                 <td><?= date('d M Y', strtotime($reg['created_at'] ?? '')) ?></td>
               </tr>
             <?php endforeach; ?>
           <?php else : ?>
             <tr>
-              <td colspan="8" class="text-center">No registrations found.</td>
+              <td colspan="9" class="text-center">No registrations found</td>
             </tr>
           <?php endif; ?>
         </tbody>

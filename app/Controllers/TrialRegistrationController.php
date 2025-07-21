@@ -55,6 +55,93 @@ class TrialRegistrationController extends BaseController
         return view('admin/trial/registration', $data);
     }
 
+    public function verify()
+    {
+        $mobile = $this->request->getPost('mobile');
+        
+        if (!$mobile) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Mobile number is required'
+            ]);
+        }
+        
+        $model = new TrialPlayerModel();
+        $player = $model->where('mobile', $mobile)->first();
+        
+        if (!$player) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Player not found with this mobile number'
+            ]);
+        }
+        
+        // Calculate cricket type fees
+        $fees = $this->getCricketTypeFees($player['cricket_type']);
+        $balanceAmount = 0;
+        
+        if ($player['payment_type'] === 'partial') {
+            $balanceAmount = $fees - 199;
+        }
+        
+        return $this->response->setJSON([
+            'success' => true,
+            'player' => $player,
+            'balance_amount' => $balanceAmount,
+            'total_fees' => $fees
+        ]);
+    }
+    
+    public function updateVerification()
+    {
+        $data = $this->request->getPost();
+        $model = new TrialPlayerModel();
+        
+        $updateData = [
+            'is_verified' => 1,
+            'verified_at' => date('Y-m-d H:i:s'),
+            't_shirt_given' => isset($data['t_shirt_given']) ? 1 : 0,
+            'payment_status' => $data['payment_status'] ?? 'pending'
+        ];
+        
+        if ($model->update($data['player_id'], $updateData)) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Player verification updated successfully'
+            ]);
+        }
+        
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'Failed to update verification'
+        ]);
+    }
+    
+    private function getCricketTypeFees($cricketType)
+    {
+        $fees = [
+            'bowler' => 999,
+            'batsman' => 999,
+            'wicket-keeper' => 1199,
+            'all-rounder' => 1199
+        ];
+        
+        return $fees[$cricketType] ?? 999;
+    }
+
+    public function verificationDashboard()
+    {
+        $model = new TrialPlayerModel();
+        
+        $data['total_players'] = $model->countAll();
+        $data['verified_players'] = $model->where('is_verified', 1)->countAllResults(false);
+        $data['pending_verification'] = $model->where('is_verified', 0)->countAllResults(false);
+        $data['partial_payment'] = $model->where('payment_type', 'partial')->countAllResults(false);
+        $data['full_payment'] = $model->where('payment_type', 'full')->countAllResults(false);
+        
+        return view('admin/trial/verification_dashboard', $data);
+    }
+
     public function exportPdf()
     {
         $model = new TrialPlayerModel();
